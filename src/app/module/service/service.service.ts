@@ -18,7 +18,7 @@ const deleteServiceById = async (id:string)=> {
     return result
 }
 const updateServiceById = async (id:string, payload:TService)=> {
-    const result = await Service.findByIdAndUpdate(id, payload)
+    const result = await Service.findByIdAndUpdate(id, payload, {new:true})
     return result
 }
 

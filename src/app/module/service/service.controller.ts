@@ -1,34 +1,72 @@
-import { StatusCodes } from "http-status-codes";
-import AppError from "../../errors/AppError";
-import catchAsync from "../../utils/catchAsync";
-import { serviceServices } from "./service.service";
+import { StatusCodes } from 'http-status-codes'
+import AppError from '../../errors/AppError'
+import catchAsync from '../../utils/catchAsync'
+import { serviceServices } from './service.service'
+import sendResponse from '../../utils/sendResponse'
 
-const createService = catchAsync(async(req, res)=> {
-    const result = await serviceServices.createService(req.body)
-    return result
+const createService = catchAsync(async (req, res) => {
+  const service = await serviceServices.createService(req.body)
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Service is created successfully!',
+    data: service,
+  })
 })
-const getAllService = catchAsync(async(req, res)=> {
-    const result = await serviceServices.getAllService()
-    return result
+const getAllService = catchAsync(async (req, res) => {
+  const services = await serviceServices.getAllService()
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Services are retrieved successfully!',
+    data: services,
+  })
 })
-const getServiceById = catchAsync(async(req, res)=> {
-    const result = await serviceServices.getServiceById(req.params?.id as string)
-    return result
+const getServiceById = catchAsync(async (req, res) => {
+  const service = await serviceServices.getServiceById(req.params?.id as string)
+  if(!service){
+    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Service is retrieved successfully!',
+    data: service,
+  })
 })
-const deleteServiceById = catchAsync(async(req, res)=> {
-    const result = await serviceServices.deleteServiceById(req.params?.id as string)
-    return result
+const deleteServiceById = catchAsync(async (req, res) => {
+  const service = await serviceServices.deleteServiceById(
+    req.params?.id as string,
+  )
+  if(!service){
+    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Service is deleted successfully!',
+    data: service,
+  })
+  return service
 })
 
-const updateServiceById = catchAsync(async(req, res)=> {
-    const result = await serviceServices.updateServiceById(req.params?.id, req.body)
-})
+const updateServiceById = catchAsync(async (req, res) => {
+  const service = await serviceServices.updateServiceById(
+    req.params?.id,
+    req.body,
+  )
 
+    if(!service){
+        throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
+    }
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Service is updated successfully!',
+    data: service,
+  })
+})
 
 export const serviceControllers = {
-    createService,
-    getAllService,
-    getServiceById,
-    deleteServiceById,
-    updateServiceById
+  createService,
+  getAllService,
+  getServiceById,
+  deleteServiceById,
+  updateServiceById,
 }

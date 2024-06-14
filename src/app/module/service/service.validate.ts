@@ -6,8 +6,10 @@ const createServiceZodSchema = z.object({
     description: z.string(),
     price: z.number(),
     duration: z.number(),
-    isDeleted: z.boolean()
+    isDeleted: z.boolean().optional()
 })
+
+
 const updateServiceZodSchema = z.object({
     name: z.string().optional(),
     description: z.string().optional(),

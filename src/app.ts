@@ -13,9 +13,9 @@ app.use(express.json())
 
 
 // Routes
-app.use('/api/v1', router)
+app.use('/api', router)
 
-app.get('/api/v1/', (req, res)=> {
+app.get('/api', (req, res)=> {
     res.status(200).send({success: true, message: 'This is test route', data: null})
 })
 
