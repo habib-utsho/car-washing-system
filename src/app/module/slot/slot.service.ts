@@ -39,12 +39,11 @@ const createSlot = async (payload: TSlot) => {
       startTime: slotStartTime,
       endTime: slotEndTime,
       service,
-      ...restSlotProps
+      ...restSlotProps,
     })
     slots.push(slot)
     await slot.save()
   }
-
 
   return slots
 }

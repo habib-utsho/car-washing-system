@@ -1,8 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
-import AppError from '../../errors/AppError'
 import catchAsync from '../../utils/catchAsync'
-import { slotServices } from './slot.service'
 import sendResponse from '../../utils/sendResponse'
+import { slotServices } from './slot.service'
 
 const createSlot = catchAsync(async (req, res) => {
   const service = await slotServices.createSlot(req.body)
@@ -21,8 +20,7 @@ const getAvailableSlots = catchAsync(async (req, res) => {
   })
 })
 
-
 export const slotsControllers = {
-    createSlot,
-    getAvailableSlots
+  createSlot,
+  getAvailableSlots,
 }
