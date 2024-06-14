@@ -1,10 +1,12 @@
 import { Router } from 'express'
 import { bookingControllers } from './booking.controller'
+import zodValidateHandler from '../../middleware/zodValidateHandler'
+import { bookingZodSchema } from './booking.validate'
 
 const router = Router()
 const router2 = Router()
 
-router.post('/', bookingControllers.createBooking) //TODO: only accessible by user
+router.post('/', zodValidateHandler(bookingZodSchema.createBookingZodSchema), bookingControllers.createBooking) //TODO: only accessible by user
 router.get('/', bookingControllers.getAllBookings) //TODO: only accessible by admin
 router2.get('/my-bookings', bookingControllers.getMyBookings) //TODO: only accessible by user
 

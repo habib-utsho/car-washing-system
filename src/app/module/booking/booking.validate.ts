@@ -1,10 +1,9 @@
 import { z } from 'zod'
-import { Types } from 'mongoose'
 
 
 const createBookingZodSchema = z.object({
-  serviceId: z.instanceof(Types.ObjectId),
-  slotId: z.instanceof(Types.ObjectId),
+  serviceId: z.string(),
+  slotId: z.string(),
   vehicleType: z.enum([
     'car',
     'truck',

@@ -17,9 +17,9 @@ const createBooking = async (
   const isExistService = await Service.findById(serviceId)
   const isExistSlot = await Slot.findById(slotId)
 
-  if (!isExistService) {
+  if (!isExistService || isExistService?.isDeleted) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Service is not found!')
-  }
+    }
   if (!isExistSlot) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Slot is not found!')
   }
@@ -63,7 +63,7 @@ const createBooking = async (
     return result
   } catch (e: any) {
     await session.abortTransaction()
-    throw new Error(e)
+    throw new AppError(StatusCodes.BAD_REQUEST, e.message)
   } finally {
     await session.endSession()
   }

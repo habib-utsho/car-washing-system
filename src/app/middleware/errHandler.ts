@@ -3,14 +3,18 @@ import { StatusCodes } from 'http-status-codes'
 import mongoose, { MongooseError } from 'mongoose'
 import { ZodError } from 'zod'
 import handleZodErr from '../errors/handleZodErr'
-import { handleMongooseCastErr, handleMongooseDuplicateKeyErr, handleMongooseValidationErr } from '../errors/handleMongooseErr'
+import {
+  handleMongooseCastErr,
+  handleMongooseDuplicateKeyErr,
+  handleMongooseValidationErr,
+} from '../errors/handleMongooseErr'
 
 const notFoundErrHandler: RequestHandler = (req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`)
   const statusCode = StatusCodes.NOT_FOUND
   res
     .status(statusCode)
-    .send({ success: false, statusCode, message: error?.message })
+    .send({ success: false, statusCode, message: error?.message, data: [] })
 }
 
 const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -24,7 +28,7 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
   ]
 
   // zod err
-  if(err instanceof ZodError){
+  if (err instanceof ZodError) {
     const myErr = handleZodErr(err)
     statusCode = myErr.statusCode
     message = myErr.message
@@ -32,21 +36,21 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 
   // Cast err
-  if(err instanceof mongoose.Error.CastError){
+  if (err instanceof mongoose.Error.CastError) {
     const myErr = handleMongooseCastErr(err)
     statusCode = myErr.statusCode
     message = myErr.message
     errorMessages = myErr.errorMessages
   }
   // validation err
-  if(err instanceof mongoose.Error.ValidationError){
+  if (err instanceof mongoose.Error.ValidationError) {
     const myErr = handleMongooseValidationErr(err)
     statusCode = myErr.statusCode
     message = myErr.message
     errorMessages = myErr.errorMessages
   }
   // Cast err
-  if(err?.code === 11000){
+  if (err?.code === 11000) {
     const myErr = handleMongooseDuplicateKeyErr(err)
     statusCode = myErr.statusCode
     message = myErr.message
@@ -59,6 +63,7 @@ const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
     message,
     errorMessages,
     stack: process.env.NODE_ENV === 'production' ? '🥞' : err?.stack,
+    // err,
   })
 }
 

@@ -11,7 +11,7 @@ const slotSchema = new Schema<TSlot>({
     enum: ['available', 'booked', 'canceled'],
     default: 'available',
   },
-})
+}, {timestamps:true})
 
 const Slot = model('Slot', slotSchema)
 
