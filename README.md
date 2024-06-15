@@ -5,28 +5,35 @@ Welcome to the Car Washing System! This application is built using Express.js, M
 **Getting Started**
 To get started with the Car Washing System locally, follow these steps:
 
-_Clone this repository to your local machine:_
+## Clone this repository to your local machine:
 git clone [https://github.com/Source-Code-007/car-washing-system.git](https://github.com/Source-Code-007/car-washing-system.git)
 
-_Navigate into the project directory:_ cd car*washing_system
-\_Install dependencies:* yarn install
-_Set up your environment variables:_ Create a .env file in the root directory and provide the following variables:
+**Navigate into the project directory:** cd car_washing_system
+**Install dependencies:** yarn install
 
-**PORT**=5000
-**MONGO_URI**=your_mongodb_connection_string
 
-**Technology used**
-_-TypeScript_
-_-Express.js_
-_-MongoDB_
-_-Mongoose_
+**Set up your environment variables:** 
+Create a .env file in the root directory and provide the following variables:
 
-**Features**
-_-Authentication_
-_-Authorization_
-_-Admin can create, update and delete services_
-_-Admin can create slot for services_
-_-User can booked a slot_
+###### **NODE_ENV**=development | production
+###### **PORT**=5000 
+###### **MONGO_URI**=your_mongodb_connection_string
+###### **SALT_ROUNDS**=your_SALT_ROUNDS_for_passoword_hash
+###### **JWT_ACCESS_SECRET**=for_JWT_access_token
+
+
+## Technology used
+* TypeScript
+* Express.js
+* MongoDB
+* Mongoose
+
+## Features
+* Authentication
+* Authorization
+* Admin can create, update and delete services
+* Admin can create slot for services
+* User can booked a slot
 
 Running the Server by- **yarn dev**
 
