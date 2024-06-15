@@ -2,7 +2,7 @@
 
 Welcome to the Car Washing System! This application is built using Express.js, MongoDB, Mongoose and TypeScript to help you efficiently manage your car washing system.
 
-_Getting Started_
+**Getting Started**
 To get started with the Car Washing System locally, follow these steps:
 
 _Clone this repository to your local machine:_

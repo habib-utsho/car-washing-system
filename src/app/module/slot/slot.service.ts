@@ -13,6 +13,10 @@ const createSlot = async (payload: TSlot) => {
     throw new AppError(StatusCodes.NOT_FOUND, 'Service is not found!')
   }
 
+  if(isExistService.isDeleted){
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Service is deleted!')
+  }
+
   const slots = []
   const serviceDuration = isExistService?.duration
   const startTimeToMin =
