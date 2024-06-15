@@ -1,4 +1,4 @@
-#Car Wash Booking System
+# Car Wash Booking System
 
 Welcome to the Car Washing System! This application is built using Express.js, MongoDB, Mongoose and TypeScript to help you efficiently manage your car washing system.
 
