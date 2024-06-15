@@ -5,8 +5,10 @@ import Slot from '../slot/slot.model'
 import { TBooking } from './booking.interface'
 import Booking from './booking.model'
 import mongoose, { Types } from 'mongoose'
+import User from '../user/user.model'
 
 const createBooking = async (
+  email:string,
   payload: Partial<TBooking> & {
     serviceId: Types.ObjectId
     slotId: Types.ObjectId
@@ -16,7 +18,12 @@ const createBooking = async (
 
   const isExistService = await Service.findById(serviceId)
   const isExistSlot = await Slot.findById(slotId)
+  const isExistUser = await User.findOne({email})
 
+
+  if(!isExistUser){
+    throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
+  }
   if (!isExistService || isExistService?.isDeleted) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Service is not found!')
     }
@@ -44,7 +51,7 @@ const createBooking = async (
         {
           service: serviceId,
           slot: slotId,
-          customer: serviceId, //TODO: need to replace customer id by token
+          customer: isExistUser?._id,
           ...restBookingProps,
         },
       ],
@@ -76,9 +83,16 @@ const getAllBookings = async () => {
     .populate('slot')
   return result
 }
-const getMyBookings = async () => {
+const getMyBookings = async (email:string) => {
   // TODO: Need to find my bookings using token
-  const result = await Booking.find({})
+  const user = await User.findOne({email})
+
+  if(!user){ 
+    throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
+  }
+
+
+  const result = await Booking.find({customer:user})
     .populate('service')
     .populate('customer')
     .populate('slot')

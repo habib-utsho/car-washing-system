@@ -2,9 +2,11 @@ import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { BookingServices } from './booking.service'
+import { CustomRequest } from '../../interface/request'
+import { Response } from 'express'
 
-const createBooking = catchAsync(async (req, res) => {
-  const booking = await BookingServices.createBooking(req.body)
+const createBooking = catchAsync(async (req:CustomRequest, res:Response) => {
+  const booking = await BookingServices.createBooking(req.user?.email, req.body)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'Booking successful',
@@ -19,8 +21,8 @@ const getAllBookings = catchAsync(async (req, res) => {
     data: bookings,
   })
 })
-const getMyBookings = catchAsync(async (req, res) => {
-  const bookings = await BookingServices.getMyBookings()
+const getMyBookings = catchAsync(async (req:CustomRequest, res:Response) => {
+  const bookings = await BookingServices.getMyBookings(req.user?.email)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'User bookings retrieved successfully',
