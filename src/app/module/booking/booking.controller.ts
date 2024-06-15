@@ -2,10 +2,9 @@ import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { BookingServices } from './booking.service'
-import { CustomRequest } from '../../interface/request'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 
-const createBooking = catchAsync(async (req:CustomRequest, res:Response) => {
+const createBooking = catchAsync(async (req: Request, res: Response) => {
   const booking = await BookingServices.createBooking(req.user?.email, req.body)
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -21,7 +20,7 @@ const getAllBookings = catchAsync(async (req, res) => {
     data: bookings,
   })
 })
-const getMyBookings = catchAsync(async (req:CustomRequest, res:Response) => {
+const getMyBookings = catchAsync(async (req: Request, res: Response) => {
   const bookings = await BookingServices.getMyBookings(req.user?.email)
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -33,5 +32,5 @@ const getMyBookings = catchAsync(async (req:CustomRequest, res:Response) => {
 export const bookingControllers = {
   createBooking,
   getAllBookings,
-  getMyBookings
+  getMyBookings,
 }

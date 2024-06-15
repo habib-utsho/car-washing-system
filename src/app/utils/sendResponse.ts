@@ -8,7 +8,7 @@ const sendResponse = (
   res.status(statusCode).send({
     success: format?.success,
     statusCode,
-    message: format?.message,
+    message: format?.data?.length === 0 ?  "No Data Found" : format?.message,
     data: format?.data || null,
   })
 }

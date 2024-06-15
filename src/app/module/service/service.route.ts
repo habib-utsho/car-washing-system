@@ -5,26 +5,27 @@ import { serviceZodSchema } from './service.validate'
 import { slotZodSchema } from '../slot/slot.validate'
 import { slotsControllers } from '../slot/slot.controller'
 import auth from '../../middleware/auth'
+import { USER_ROLE } from '../user/user.constant'
 
 const router = Router()
 
 router.post(
-  '/', auth(),
+  '/', auth(USER_ROLE.admin),
   zodValidateHandler(serviceZodSchema.createServiceZodSchema),
   serviceControllers.createService,
 ) //Only accessible by admin
 router.post(
   '/slots',
-  auth(),
+  auth(USER_ROLE.admin),
   zodValidateHandler(slotZodSchema.createSlotZodSchema),
   slotsControllers.createSlot,
 ) //Only accessible by admin
 router.get('/', serviceControllers.getAllService)
 router.get('/:id', serviceControllers.getServiceById)
-router.delete('/:id', auth(), serviceControllers.deleteServiceById) //Only accessible by admin
+router.delete('/:id', auth(USER_ROLE.admin), serviceControllers.deleteServiceById) //Only accessible by admin
 router.put(
   '/:id',
-  auth(),
+  auth(USER_ROLE.admin),
   zodValidateHandler(serviceZodSchema.updateServiceZodSchema),
   serviceControllers.updateServiceById,
 ) //Only accessible by admin

@@ -10,11 +10,11 @@ import {
 } from '../errors/handleMongooseErr'
 
 const notFoundErrHandler: RequestHandler = (req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`)
+  // const error = new Error(`Not Found - ${req.originalUrl}`)
   const statusCode = StatusCodes.NOT_FOUND
   res
     .status(statusCode)
-    .send({ success: false, statusCode, message: error?.message, data: [] })
+    .send({ success: false, statusCode, message: 'Not Found' })
 }
 
 const globalErrHandler: ErrorRequestHandler = (err, req, res, next) => {
