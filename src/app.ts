@@ -15,12 +15,14 @@ app.use(express.json())
 // Routes
 app.use('/api', router)
 
+
+// Home route to test server
 app.get('/api', (req, res)=> {
     res.status(200).send({success: true, message: 'This is test route', data: null})
 })
 
 
-// err handler middleware 
+// err handling middleware 
 app.use(notFoundErrHandler)
 app.use(globalErrHandler)
 

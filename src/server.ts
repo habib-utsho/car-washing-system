@@ -15,8 +15,6 @@ server = app.listen(process.env.PORT, async()=> {
 
 
 
-
-
 // stop server when async errors
 process.on('unhandledRejection', () => {
     console.log('😡 UNHANDLED REJECTION! Shutting down...')
