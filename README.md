@@ -32,4 +32,4 @@ Running the Server by- **yarn dev**
 
 Local Base URL: **http://localhost:5000**
 
-Production Base URL: \*\*\*\*
+Production Base URL: **https://car-washing-system.onrender.com**
