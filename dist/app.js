@@ -15,8 +15,8 @@ app.use(express_1.default.json());
 // Routes
 app.use('/api', routes_1.default);
 // Home route to test server
-app.get('/api', (req, res) => {
-    res.status(200).send({ success: true, message: 'This is test route', data: null });
+app.get('/', (req, res) => {
+    res.status(200).send({ success: true, message: 'This is homepage' });
 });
 // err handling middleware 
 app.use(errHandler_1.notFoundErrHandler);
