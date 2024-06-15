@@ -15,7 +15,7 @@ git clone [https://github.com/Source-Code-007/car-washing-system.git](https://gi
 **Set up your environment variables:** 
 Create a .env file in the root directory and provide the following variables:
 
-###### **NODE_ENV**=development|production
+###### **NODE_ENV**=development | production
 ###### **PORT**=5000 
 ###### **MONGO_URI**=your_mongodb_connection_string
 ###### **SALT_ROUNDS**=your_SALT_ROUNDS_for_passoword_hash
