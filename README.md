@@ -13,27 +13,27 @@ git clone [https://github.com/Source-Code-007/car-washing-system.git](https://gi
 
 
 ### **Set up your environment variables:** 
-###Create a .env file in the root directory and provide the following variables:
+### Create a .env file in the root directory and provide the following variables:
 
-###**NODE_ENV**=development|production
-###**PORT**=5000
-###**MONGO_URI**=your_mongodb_connection_string
-###**SALT_ROUNDS**=your_SALT_ROUNDS_for_passoword_hash
-###**JWT_ACCESS_SECRET**=for_JWT_access_token
+### **NODE_ENV**=development|production
+### **PORT**=5000
+### **MONGO_URI**=your_mongodb_connection_string
+### **SALT_ROUNDS**=your_SALT_ROUNDS_for_passoword_hash
+### **JWT_ACCESS_SECRET**=for_JWT_access_token
 
 
-##Technology used##
-*-TypeScript
-*-Express.js-
-*-MongoDB
-*-Mongoose
+## Technology used
+* TypeScript
+* Express.js
+* MongoDB
+* Mongoose
 
 ##Features
-*-Authentication
-*-Authorization
-*-Admin can create, update and delete services
-*-Admin can create slot for services
-*-User can booked a slot
+* Authentication
+* Authorization
+* Admin can create, update and delete services
+* Admin can create slot for services
+* User can booked a slot
 
 Running the Server by- **yarn dev**
 
