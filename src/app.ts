@@ -17,8 +17,8 @@ app.use('/api', router)
 
 
 // Home route to test server
-app.get('/api', (req, res)=> {
-    res.status(200).send({success: true, message: 'This is test route', data: null})
+app.get('/', (req, res)=> {
+    res.status(200).send({success: true, message: 'This is homepage'})
 })
 
 
