@@ -8,7 +8,7 @@ import mongoose, { Types } from 'mongoose'
 import User from '../user/user.model'
 
 const createBooking = async (
-  email:string,
+  email: string,
   payload: Partial<TBooking> & {
     serviceId: Types.ObjectId
     slotId: Types.ObjectId
@@ -18,15 +18,14 @@ const createBooking = async (
 
   const isExistService = await Service.findById(serviceId)
   const isExistSlot = await Slot.findById(slotId)
-  const isExistUser = await User.findOne({email})
+  const isExistUser = await User.findOne({ email })
 
-
-  if(!isExistUser){
+  if (!isExistUser) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
   }
   if (!isExistService || isExistService?.isDeleted) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Service is not found!')
-    }
+  }
   if (!isExistSlot) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Slot is not found!')
   }
@@ -65,8 +64,9 @@ const createBooking = async (
     await session.commitTransaction()
 
     const result = await Booking.findById(booking[0]._id)
+      .populate('customer')
       .populate('service')
-      .populate('slot') //TODO: need to add customer populate
+      .populate('slot')
     return result
   } catch (e: any) {
     await session.abortTransaction()
@@ -83,16 +83,15 @@ const getAllBookings = async () => {
     .populate('slot')
   return result
 }
-const getMyBookings = async (email:string) => {
+const getMyBookings = async (email: string) => {
   // TODO: Need to find my bookings using token
-  const user = await User.findOne({email})
+  const user = await User.findOne({ email })
 
-  if(!user){ 
+  if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
   }
 
-
-  const result = await Booking.find({customer:user})
+  const result = await Booking.find({ customer: user })
     .populate('service')
     .populate('customer')
     .populate('slot')
