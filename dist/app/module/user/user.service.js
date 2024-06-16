@@ -40,7 +40,7 @@ const signinUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         role: user === null || user === void 0 ? void 0 : user.role
     };
     const accessToken = jsonwebtoken_1.default.sign(jwtPayload, process.env.JWT_ACCESS_SECRET, { expiresIn: '100d' });
-    return { accessToken };
+    return { accessToken, data: user };
 });
 const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.default.find({});

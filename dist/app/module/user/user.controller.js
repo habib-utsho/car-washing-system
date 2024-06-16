@@ -27,11 +27,13 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 const signinUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_service_1.userServices.signinUser(req.body);
-    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
-        success: true,
-        message: 'User logged in successfully',
-        data: user,
-    });
+    const { accessToken, data } = user || {};
+    res.status(http_status_codes_1.StatusCodes.OK).send({ success: true, statusCode: http_status_codes_1.StatusCodes.OK, message: 'User logged in successfully', token: accessToken, data });
+    // sendResponse(res, StatusCodes.OK, {
+    //   success: true,
+    //   message: 'User logged in successfully',
+    //   data,
+    // })
 }));
 const getAllUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield user_service_1.userServices.getAllUser();
