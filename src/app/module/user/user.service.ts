@@ -33,7 +33,7 @@ const signinUser = async (payload: TUserSignin) => {
   const accessToken = jwt.sign(jwtPayload, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '100d' })
 
 
-  return {accessToken}
+  return {accessToken, data:user}
 
 }
 const getAllUser = async () => {
