@@ -64,8 +64,9 @@ const createBooking = (email, payload) => __awaiter(void 0, void 0, void 0, func
         }
         yield session.commitTransaction();
         const result = yield booking_model_1.default.findById(booking[0]._id)
+            .populate('customer')
             .populate('service')
-            .populate('slot'); //TODO: need to add customer populate
+            .populate('slot');
         return result;
     }
     catch (e) {

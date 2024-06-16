@@ -34,6 +34,9 @@ const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (!isExistService) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Service is not found!');
     }
+    if (isExistService.isDeleted) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Service is deleted!');
+    }
     const slots = [];
     const serviceDuration = isExistService === null || isExistService === void 0 ? void 0 : isExistService.duration;
     const startTimeToMin = Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[0]) * 60 + Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[1]);

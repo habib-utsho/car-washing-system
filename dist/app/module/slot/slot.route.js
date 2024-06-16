@@ -5,4 +5,4 @@ const express_1 = require("express");
 const slot_controller_1 = require("./slot.controller");
 const router = (0, express_1.Router)();
 exports.slotRouter = router;
-router.get('/', slot_controller_1.slotsControllers.getAvailableSlots);
+router.get('/availability', slot_controller_1.slotsControllers.getAvailableSlots);
