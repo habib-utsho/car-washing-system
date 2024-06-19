@@ -30,7 +30,7 @@ const getAllService = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     const services = yield service_service_1.serviceServices.getAllService();
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'Services are retrieved successfully!',
+        message: 'Services retrieved successfully!',
         data: services,
     });
 }));
@@ -42,7 +42,7 @@ const getServiceById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     }
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'Service is retrieved successfully!',
+        message: 'Service retrieved successfully!',
         data: service,
     });
 }));

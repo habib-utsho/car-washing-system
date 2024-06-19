@@ -28,6 +28,7 @@ const http_status_codes_1 = require("http-status-codes");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const service_model_1 = __importDefault(require("../service/service.model"));
 const slot_model_1 = __importDefault(require("./slot.model"));
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const _a = payload || {}, { service, startTime, endTime } = _a, restSlotProps = __rest(_a, ["service", "startTime", "endTime"]);
     const isExistService = yield service_model_1.default.findById(service);
@@ -54,8 +55,21 @@ const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return slots;
 });
-const getAvailableSlots = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield slot_model_1.default.find({ isBooked: 'available' }).populate('service');
+const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log({...query, isBooked:'available'}, 'from query');
+    const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign(Object.assign({}, query), { isBooked: 'available' }))
+        .searchQuery(['isBooked'])
+        .filterQuery()
+        .paginateQuery()
+        .sortQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'service',
+        },
+    ]);
+    // const result = await Slot.find({ isBooked: 'available' }).populate('service')
+    const result = yield slotsQuery.queryModel;
     return result;
 });
 exports.slotServices = {

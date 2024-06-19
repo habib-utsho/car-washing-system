@@ -26,7 +26,7 @@ const createSlot = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 const getAvailableSlots = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const services = yield slot_service_1.slotServices.getAvailableSlots();
+    const services = yield slot_service_1.slotServices.getAvailableSlots(req.query);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Available slots retrieved successfully',

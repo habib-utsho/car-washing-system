@@ -12,7 +12,7 @@ const createSlot = catchAsync(async (req, res) => {
   })
 })
 const getAvailableSlots = catchAsync(async (req, res) => {
-  const services = await slotServices.getAvailableSlots()
+  const services = await slotServices.getAvailableSlots(req.query)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'Available slots retrieved successfully',

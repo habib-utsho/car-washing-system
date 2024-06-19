@@ -3,6 +3,7 @@ import AppError from '../../errors/AppError'
 import Service from '../service/service.model'
 import { TSlot } from './slot.interface'
 import Slot from './slot.model'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 const createSlot = async (payload: TSlot) => {
   const { service, startTime, endTime, ...restSlotProps } = payload || {}
@@ -51,8 +52,21 @@ const createSlot = async (payload: TSlot) => {
 
   return slots
 }
-const getAvailableSlots = async () => {
-  const result = await Slot.find({ isBooked: 'available' }).populate('service')
+const getAvailableSlots = async (query:Record<string,unknown>) => {
+  // console.log({...query, isBooked:'available'}, 'from query');
+  const slotsQuery = new QueryBuilder(Slot.find(), {...query, isBooked:'available'})
+  .searchQuery(['isBooked'])
+  .filterQuery()
+  .paginateQuery()
+  .sortQuery()
+  .fieldFilteringQuery()
+  .populateQuery([
+    {
+      path: 'service',
+    },
+  ])
+  // const result = await Slot.find({ isBooked: 'available' }).populate('service')
+  const result = await slotsQuery.queryModel
   return result
 }
 

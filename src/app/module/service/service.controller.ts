@@ -16,7 +16,7 @@ const getAllService = catchAsync(async (req, res) => {
   const services = await serviceServices.getAllService()
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'Services are retrieved successfully!',
+    message: 'Services retrieved successfully!',
     data: services,
   })
 })
@@ -27,7 +27,7 @@ const getServiceById = catchAsync(async (req, res) => {
   }
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'Service is retrieved successfully!',
+    message: 'Service retrieved successfully!',
     data: service,
   })
 })
