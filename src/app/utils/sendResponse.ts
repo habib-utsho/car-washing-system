@@ -1,16 +1,22 @@
 import { Response } from 'express'
-import { StatusCodes } from 'http-status-codes';
+import getMeta from './getMeta'
 
 const sendResponse = (
   res: Response,
   statusCode: number,
-  format: { success: boolean; message: string; data: any },
+  format: {
+    success: boolean
+    message: string
+    data: any
+    // meta?: { total: number; page: number; totalPage: number; limit: number }
+    meta?: { query: Record<string, unknown>; total: number }
+  },
 ) => {
   res.status(statusCode).send({
-    success: format?.data?.length === 0 ? false : format?.success,
-    statusCode : format?.data?.length === 0 ? StatusCodes.NOT_FOUND : statusCode,
-    message: format?.data?.length === 0 ? 'No Data Found' : format?.message,
+    success: format?.success,
+    message: format?.message,
     data: format?.data || null,
+    meta: getMeta(format.meta?.query, format.meta?.total) || null,
   })
 }
 

@@ -4,7 +4,6 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import AppError from '../errors/AppError'
 import { StatusCodes } from 'http-status-codes'
 import { TUserRole } from '../module/user/user.interface'
-import { decode } from 'punycode'
 
 const auth = (...userRoles: TUserRole[]) => {
   return catchAsync((req: Request, res: Response, next: NextFunction) => {

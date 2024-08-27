@@ -1,11 +1,13 @@
 import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/AppError'
-import Service from '../service/service.model'
 import Slot from '../slot/slot.model'
 import { TBooking } from './booking.interface'
 import Booking from './booking.model'
 import mongoose, { Types } from 'mongoose'
 import User from '../user/user.model'
+import QueryBuilder from '../../builder/QueryBuilder'
+import { bookingSearchableFields } from './booking.constant'
+import Service from '../service/service.model'
 
 const createBooking = async (
   email: string,
@@ -76,26 +78,68 @@ const createBooking = async (
   }
 }
 
-const getAllBookings = async () => {
-  const result = await Booking.find({})
-    .populate('service')
-    .populate('customer')
-    .populate('slot')
-  return result
+const getAllBookings = async (query: Record<string, unknown>) => {
+  const bookingQuery = new QueryBuilder(Booking.find(), {
+    ...query,
+    sort: `${query.sort} isDeleted`,
+  })
+    .searchQuery(bookingSearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      {
+        path: 'service',
+      },
+      {
+        path: 'customer',
+      },
+      {
+        path: 'slot',
+      },
+    ])
+
+  const result = await bookingQuery?.queryModel
+  const total = await Booking.countDocuments(
+    bookingQuery.queryModel.getFilter(),
+  )
+  return { data: result, total }
 }
-const getMyBookings = async (email: string) => {
-  // TODO: Need to find my bookings using token
-  const user = await User.findOne({ email })
+
+const getMyBookings = async (query: Record<string, unknown>) => {
+  const user = await User.findOne({ email: query.email })
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
   }
 
-  const result = await Booking.find({ customer: user })
-    .populate('service')
-    .populate('customer')
-    .populate('slot')
-  return result
+  const bookingQuery = new QueryBuilder(Booking.find(), {
+    ...query,
+    sort: `${query.sort} isDeleted`,
+  })
+    .searchQuery(bookingSearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      {
+        path: 'service',
+      },
+      {
+        path: 'customer',
+      },
+      {
+        path: 'slot',
+      },
+    ])
+
+  const result = await bookingQuery?.queryModel
+  const total = await Booking.countDocuments(
+    bookingQuery.queryModel.getFilter(),
+  )
+  return { data: result, total }
 }
 
 export const BookingServices = {

@@ -13,17 +13,18 @@ const createService = catchAsync(async (req, res) => {
   })
 })
 const getAllService = catchAsync(async (req, res) => {
-  const services = await serviceServices.getAllService()
+  const { data, total } = await serviceServices.getAllService(req.query)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'Services retrieved successfully!',
-    data: services,
+    data,
+    meta: { query: req.query, total },
   })
 })
 const getServiceById = catchAsync(async (req, res) => {
   const service = await serviceServices.getServiceById(req.params?.id as string)
-  if(!service){
-    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
+  if (!service) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')
   }
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -35,8 +36,8 @@ const deleteServiceById = catchAsync(async (req, res) => {
   const service = await serviceServices.deleteServiceById(
     req.params?.id as string,
   )
-  if(!service){
-    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
+  if (!service) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')
   }
   sendResponse(res, StatusCodes.OK, {
     success: true,
@@ -52,9 +53,9 @@ const updateServiceById = catchAsync(async (req, res) => {
     req.body,
   )
 
-    if(!service){
-        throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')  
-    }
+  if (!service) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Service not found')
+  }
 
   sendResponse(res, StatusCodes.OK, {
     success: true,

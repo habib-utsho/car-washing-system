@@ -4,6 +4,7 @@ import Service from '../service/service.model'
 import { TSlot } from './slot.interface'
 import Slot from './slot.model'
 import QueryBuilder from '../../builder/QueryBuilder'
+import { slotSearchableFields } from './slot.constant'
 
 const createSlot = async (payload: TSlot) => {
   const { service, startTime, endTime, ...restSlotProps } = payload || {}
@@ -14,7 +15,7 @@ const createSlot = async (payload: TSlot) => {
     throw new AppError(StatusCodes.NOT_FOUND, 'Service is not found!')
   }
 
-  if(isExistService.isDeleted){
+  if (isExistService.isDeleted) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Service is deleted!')
   }
 
@@ -52,25 +53,49 @@ const createSlot = async (payload: TSlot) => {
 
   return slots
 }
-const getAvailableSlots = async (query:Record<string,unknown>) => {
-  // console.log({...query, isBooked:'available'}, 'from query');
-  const slotsQuery = new QueryBuilder(Slot.find(), {...query, isBooked:'available'})
-  .searchQuery(['isBooked'])
-  .filterQuery()
-  .paginateQuery()
-  .sortQuery()
-  .fieldFilteringQuery()
-  .populateQuery([
-    {
-      path: 'service',
-    },
-  ])
-  // const result = await Slot.find({ isBooked: 'available' }).populate('service')
-  const result = await slotsQuery.queryModel
-  return result
+const getAllSlots = async (query: Record<string, unknown>) => {
+  const slotsQuery = new QueryBuilder(Slot.find(), {
+    ...query,
+  })
+    .searchQuery(slotSearchableFields)
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      {
+        path: 'service',
+      },
+    ])
+
+  const result = await slotsQuery?.queryModel
+  const total = await Slot.countDocuments(slotsQuery.queryModel.getFilter())
+  return { data: result, total }
+}
+
+const getAvailableSlots = async (query: Record<string, unknown>) => {
+  const slotsQuery = new QueryBuilder(Slot.find(), {
+    ...query,
+    isBooked: 'available',
+  })
+    .searchQuery([])
+    .filterQuery()
+    .sortQuery()
+    .paginateQuery()
+    .fieldFilteringQuery()
+    .populateQuery([
+      {
+        path: 'service',
+      },
+    ])
+
+  const result = await slotsQuery?.queryModel
+  const total = await Slot.countDocuments(slotsQuery.queryModel.getFilter())
+  return { data: result, total }
 }
 
 export const slotServices = {
   createSlot,
   getAvailableSlots,
+  getAllSlots,
 }

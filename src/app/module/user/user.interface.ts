@@ -8,6 +8,7 @@ export type TUser = {
   phone: string
   role: TUserRole
   address: string
+  isDeleted: boolean
 }
 
 export type TUserSignin = {
