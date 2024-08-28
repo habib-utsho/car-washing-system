@@ -7,7 +7,32 @@ import QueryBuilder from '../../builder/QueryBuilder'
 import { slotSearchableFields } from './slot.constant'
 
 const createSlot = async (payload: TSlot) => {
-  const { service, startTime, endTime, ...restSlotProps } = payload || {}
+  const { service, startTime, endTime, date, ...restSlotProps } = payload || {}
+
+  // Validate if the date is not in the past
+  const today = new Date()
+  today.setHours(0, 0, 0, 0) // Set the time to the beginning of today for accurate comparison
+
+  const slotDate = new Date(date) // Parse the ISO 8601 date
+
+  if (slotDate < today) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      'The date cannot be in the past!',
+    )
+  }
+  // Validation: Check if endTime is greater than startTime
+  const startTimeToMin =
+    Number(startTime?.split(':')[0]) * 60 + Number(startTime?.split(':')[1])
+  const endTimeToMin =
+    Number(endTime?.split(':')[0]) * 60 + Number(endTime?.split(':')[1])
+
+  if (endTimeToMin <= startTimeToMin) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      'End time must be later than start time!',
+    )
+  }
 
   const isExistService = await Service.findById(service)
 
@@ -21,10 +46,6 @@ const createSlot = async (payload: TSlot) => {
 
   const slots = []
   const serviceDuration = isExistService?.duration
-  const startTimeToMin =
-    Number(startTime?.split(':')[0]) * 60 + Number(startTime?.split(':')[1])
-  const endTimeToMin =
-    Number(endTime?.split(':')[0]) * 60 + Number(endTime?.split(':')[1])
 
   for (
     let time = startTimeToMin;
@@ -45,6 +66,7 @@ const createSlot = async (payload: TSlot) => {
       startTime: slotStartTime,
       endTime: slotEndTime,
       service,
+      date,
       ...restSlotProps,
     })
     slots.push(slot)
@@ -94,8 +116,26 @@ const getAvailableSlots = async (query: Record<string, unknown>) => {
   return { data: result, total }
 }
 
+const toggleSlotStatus = async (id: string) => {
+  const slot = await Slot.findById(id)
+
+  if (!slot) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Slot is not found!')
+  }
+  if (slot.isBooked === 'booked') {
+    throw new AppError(StatusCodes.BAD_REQUEST, 'Slot is already booked!')
+  }
+
+  slot.isBooked = slot.isBooked === 'available' ? 'canceled' : 'available'
+  await slot.save()
+
+  return slot
+}
+
 export const slotServices = {
   createSlot,
   getAvailableSlots,
   getAllSlots,
+
+  toggleSlotStatus,
 }

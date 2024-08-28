@@ -5,8 +5,19 @@ const createUserZodSchema = z.object({
   email: z.string(),
   password: z.string(),
   phone: z.string(),
-  role: z.enum(['admin', 'user']),
+  role: z.enum(['admin', 'user']).optional(),
   address: z.string(),
+  img: z.string(),
+})
+const editProfileZodSchema = z.object({
+  img: z.string().optional(),
+  name: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+})
+const editPasswordZodSchema = z.object({
+  oldPassword: z.string(),
+  newPassword: z.string(),
 })
 const signinUserZodSchema = z.object({
   email: z.string(),
@@ -15,5 +26,7 @@ const signinUserZodSchema = z.object({
 
 export const userZodSchema = {
   createUserZodSchema,
-  signinUserZodSchema
+  signinUserZodSchema,
+  editProfileZodSchema,
+  editPasswordZodSchema,
 }

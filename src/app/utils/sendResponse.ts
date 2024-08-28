@@ -16,7 +16,7 @@ const sendResponse = (
     success: format?.success,
     message: format?.message,
     data: format?.data || null,
-    meta: getMeta(format.meta?.query, format.meta?.total) || null,
+    meta: getMeta(format.meta?.query, format.meta?.total),
   })
 }
 

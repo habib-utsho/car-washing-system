@@ -33,8 +33,18 @@ const getAllSlots = catchAsync(async (req, res) => {
   })
 })
 
+const toggleSlotStatus = catchAsync(async (req, res) => {
+  const slot = await slotServices.toggleSlotStatus(req.params.id)
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Slot status updated successfully',
+    data: slot,
+  })
+})
+
 export const slotsControllers = {
   createSlot,
   getAvailableSlots,
   getAllSlots,
+  toggleSlotStatus,
 }

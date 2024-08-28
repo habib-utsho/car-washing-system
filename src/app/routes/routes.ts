@@ -3,6 +3,7 @@ import { serviceRouter } from '../module/service/service.route'
 import { slotRouter } from '../module/slot/slot.route'
 import { bookingRouter, myBookingRouter } from '../module/booking/booking.route'
 import { userRouter } from '../module/user/user.route'
+import { statsRouter } from '../module/stats/stats.route'
 
 const router = Router()
 const routes = [
@@ -16,17 +17,20 @@ const routes = [
   },
   {
     path: '/bookings',
-    route: bookingRouter
+    route: bookingRouter,
   },
   {
     path: '/',
-    route: myBookingRouter
+    route: myBookingRouter,
   },
   {
     path: '/auth',
-    route: userRouter
+    route: userRouter,
   },
-
+  {
+    path: '/stats',
+    route: statsRouter,
+  },
 ]
 
 routes.forEach((route) => router.use(route.path, route.route))

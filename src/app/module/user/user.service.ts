@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/AppError'
-import { TUser, TUserSignin } from './user.interface'
+import { TPasswordUpdate, TUser, TUserSignin } from './user.interface'
 import User from './user.model'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import QueryBuilder from '../../builder/QueryBuilder'
-import { USER_ROLE, userSearchableFields } from './user.constant'
+import { userSearchableFields } from './user.constant'
 
 const createUser = async (payload: TUser) => {
   const isExistUser = await User.findOne({ email: payload?.email })
@@ -27,10 +27,12 @@ const signinUser = async (payload: TUserSignin) => {
   }
 
   const jwtPayload = {
+    _id: user._id,
     name: user.name,
     email: user.email,
     phone: user.phone,
     role: user.role,
+    img: user.img,
     address: user.address,
   }
 
@@ -86,10 +88,12 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload = {
+    _id: user._id,
     name: user.name,
     email: user.email,
     phone: user.phone,
     role: user.role,
+    img: user.role,
     address: user.address,
   }
 
@@ -123,18 +127,16 @@ const getAllUser = async (query: Record<string, unknown>) => {
   return { data: result, total }
 }
 
-const userToAdminById = async (id: string) => {
+const toggleUserRoleById = async (id: string) => {
   const user = await User.findById({ _id: id })
-  if (user?.role === USER_ROLE.admin) {
-    throw new AppError(StatusCodes.FORBIDDEN, 'This user is already admin !')
+  if (!user) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'User is not found!')
   }
 
-  const result = await User.findByIdAndUpdate(
-    id,
-    { role: USER_ROLE.admin },
-    { new: true },
-  ).select('-__v')
-  return result
+  user.role = user.role === 'admin' ? 'user' : 'admin'
+  await user.save()
+
+  return user
 }
 
 const deleteUserById = async (id: string) => {
@@ -146,11 +148,40 @@ const deleteUserById = async (id: string) => {
   return user
 }
 
+const updateProfile = async (id: string, payload: TUser) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true })
+  return result
+}
+const changePassword = async (id: string, payload: TPasswordUpdate) => {
+  const user = await User.findById(id)
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
+  }
+
+  const isMatch = await bcrypt.compare(payload.oldPassword, user.password)
+  if (!isMatch) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Password is not match')
+  }
+
+  const hashedPass = await bcrypt.hash(
+    payload.newPassword,
+    Number(process.env.SALT_ROUNDS),
+  )
+
+  user.password = hashedPass
+
+  user.save()
+
+  return user
+}
+
 export const userServices = {
   createUser,
   signinUser,
   getAllUser,
   refreshToken,
   deleteUserById,
-  userToAdminById,
+  toggleUserRoleById,
+  updateProfile,
+  changePassword,
 }

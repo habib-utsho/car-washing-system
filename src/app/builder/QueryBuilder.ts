@@ -21,41 +21,45 @@ class QueryBuilder<T> {
             }) as FilterQuery<T>,
         ),
       })
-      }
+    }
     return this
   }
 
   //   Filter method
   public filterQuery() {
-    const queryObj = { ...this.query }
+    const { priceRange, ...restQuery } = this.query
+    const queryObj = { ...restQuery }
     const excludedFields = ['searchTerm', 'page', 'sort', 'limit', 'fields']
     excludedFields.forEach((el) => delete queryObj[el])
-    const serviceId = queryObj?.serviceId
-    
-    if(serviceId){
-      // console.log(queryObj);
-      delete queryObj.serviceId
-      this.queryModel = this.queryModel.find({service: serviceId, ...queryObj})
-    } else{
-      this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>)
+
+    this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>)
+
+    // Apply price range filtering if provided
+    if (priceRange) {
+      console.log(priceRange, 'priceRange')
+      const [minPrice, maxPrice] = (priceRange as string).split(',').map(Number)
+      this.queryModel = this.queryModel
+        .where('price')
+        .gte(minPrice)
+        .lte(maxPrice)
     }
 
     return this
   }
 
-
   //   Sort method
   public sortQuery() {
-    const sort = (this.query?.sort as string)?.split(',')?.join(' ') || '-createdAt'
+    const sort =
+      (this.query?.sort as string)?.split(',')?.join(' ') || '-createdAt'
 
     this.queryModel = this.queryModel.sort(sort)
     return this
   }
 
   // Paginate method
-  
+
   public paginateQuery() {
-    const page =this.query?.page ? Number(this.query?.page) : 1
+    const page = this.query?.page ? Number(this.query?.page) : 1
     const limit = Number(this.query?.limit) || 10
     const skip = (page - 1) * limit
     this.queryModel = this.queryModel.limit(limit).skip(skip)
@@ -64,18 +68,18 @@ class QueryBuilder<T> {
 
   // Field filtering
   public fieldFilteringQuery() {
-    const fields = (this.query?.fields as string)?.split(',')?.join(' ') || '-__v'
+    const fields =
+      (this.query?.fields as string)?.split(',')?.join(' ') || '-__v'
     this.queryModel = this.queryModel.select(fields)
 
     return this
   }
 
   // Populate query
-  public populateQuery(populateOptions: (string | PopulateOptions)[]){
+  public populateQuery(populateOptions: (string | PopulateOptions)[]) {
     this.queryModel = this.queryModel.populate(populateOptions)
     return this
   }
 }
-
 
 export default QueryBuilder

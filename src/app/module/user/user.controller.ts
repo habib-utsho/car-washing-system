@@ -64,14 +64,41 @@ const deleteUserById = catchAsync(async (req, res) => {
     data: user,
   })
 })
-const userToAdminById = catchAsync(async (req, res) => {
-  const user = await userServices.userToAdminById(req.params.id)
+const toggleUserRoleById = catchAsync(async (req, res) => {
+  const user = await userServices.toggleUserRoleById(req.params.id)
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
   }
   sendResponse(res, StatusCodes.OK, {
     success: true,
-    message: 'This user is now admin!',
+    message: `This user is now ${user.role}!`,
+    data: user,
+  })
+})
+
+const updateProfile = catchAsync(async (req, res) => {
+  const user = await userServices.updateProfile(req.params?.id, req.body)
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found')
+  }
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'User is updated successfully!',
+    data: user,
+  })
+})
+const changePassword = catchAsync(async (req, res) => {
+  const user = await userServices.changePassword(req.params?.id, req.body)
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'User not found')
+  }
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Password is updated successfully!',
     data: user,
   })
 })
@@ -82,5 +109,7 @@ export const userControllers = {
   getAllUser,
   refreshToken,
   deleteUserById,
-  userToAdminById,
+  toggleUserRoleById,
+  updateProfile,
+  changePassword,
 }

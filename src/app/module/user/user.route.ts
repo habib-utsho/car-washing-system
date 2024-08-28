@@ -27,9 +27,21 @@ router.delete(
   userControllers.deleteUserById,
 )
 router.patch(
-  '/users/make-admin/:id',
+  '/users/toggle-role/:id',
   auth(USER_ROLE.admin),
-  userControllers.userToAdminById,
+  userControllers.toggleUserRoleById,
+)
+router.patch(
+  '/users/edit-profile/:id',
+  zodValidateHandler(userZodSchema.editProfileZodSchema),
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  userControllers.updateProfile,
+)
+router.patch(
+  '/users/edit-password/:id',
+  zodValidateHandler(userZodSchema.editPasswordZodSchema),
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  userControllers.changePassword,
 )
 
 export { router as userRouter }
