@@ -52,6 +52,7 @@ const createBooking = async (
         {
           service: serviceId,
           slot: slotId,
+          date: isExistSlot.date,
           customer: isExistUser?._id,
           ...restBookingProps,
         },
@@ -70,6 +71,7 @@ const createBooking = async (
       .populate('service')
       .populate('slot')
     return result
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     await session.abortTransaction()
     throw new AppError(StatusCodes.BAD_REQUEST, e.message)
@@ -114,6 +116,11 @@ const getMyBookings = async (query: Record<string, unknown>) => {
     throw new AppError(StatusCodes.NOT_FOUND, 'User is not found!')
   }
 
+  // Remove `email` from query as it's already used to find the user
+  delete query.email
+  const isUpcoming = query.upcoming
+  delete query.upcoming
+
   const bookingQuery = new QueryBuilder(Booking.find(), {
     ...query,
     sort: `${query.sort} isDeleted`,
@@ -135,7 +142,14 @@ const getMyBookings = async (query: Record<string, unknown>) => {
       },
     ])
 
-  const result = await bookingQuery?.queryModel
+  if (isUpcoming) {
+    const currentTimestamp = new Date().getTime() // Get current time as a timestamp
+    bookingQuery.queryModel = bookingQuery.queryModel
+      .where('date')
+      .gte(currentTimestamp)
+  }
+
+  const result = await bookingQuery?.queryModel.exec()
   const total = await Booking.countDocuments(
     bookingQuery.queryModel.getFilter(),
   )

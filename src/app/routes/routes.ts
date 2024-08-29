@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { serviceRouter } from '../module/service/service.route'
 import { slotRouter } from '../module/slot/slot.route'
-import { bookingRouter, myBookingRouter } from '../module/booking/booking.route'
+import { bookingRouter } from '../module/booking/booking.route'
 import { userRouter } from '../module/user/user.route'
 import { statsRouter } from '../module/stats/stats.route'
 
@@ -18,10 +18,6 @@ const routes = [
   {
     path: '/bookings',
     route: bookingRouter,
-  },
-  {
-    path: '/',
-    route: myBookingRouter,
   },
   {
     path: '/auth',

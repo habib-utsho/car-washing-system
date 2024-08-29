@@ -36,7 +36,6 @@ class QueryBuilder<T> {
 
     // Apply price range filtering if provided
     if (priceRange) {
-      console.log(priceRange, 'priceRange')
       const [minPrice, maxPrice] = (priceRange as string).split(',').map(Number)
       this.queryModel = this.queryModel
         .where('price')

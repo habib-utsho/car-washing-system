@@ -15,6 +15,7 @@ export type TBooking = {
     | 'hybridVehicle'
     | 'bicycle'
     | 'tractor'
+  date: Date
   vehicleBrand: string
   vehicleModel: string
   manufacturingYear: number

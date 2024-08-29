@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/AppError'
 import { TPasswordUpdate, TUser, TUserSignin } from './user.interface'
@@ -154,12 +155,13 @@ const updateProfile = async (id: string, payload: TUser) => {
 }
 const changePassword = async (id: string, payload: TPasswordUpdate) => {
   const user = await User.findById(id)
+
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found!')
   }
 
-  const isMatch = await bcrypt.compare(payload.oldPassword, user.password)
-  if (!isMatch) {
+  const decryptPass = await bcrypt.compare(payload.oldPassword, user.password)
+  if (!decryptPass) {
     throw new AppError(StatusCodes.FORBIDDEN, 'Password is not match')
   }
 
@@ -168,11 +170,18 @@ const changePassword = async (id: string, payload: TPasswordUpdate) => {
     Number(process.env.SALT_ROUNDS),
   )
 
-  user.password = hashedPass
-
-  user.save()
-
-  return user
+  const result = await User.findByIdAndUpdate(
+    id,
+    { password: hashedPass },
+    { new: true },
+  ).select('-password')
+  if (!result) {
+    throw new AppError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'Failed to update password.',
+    )
+  }
+  return result
 }
 
 export const userServices = {
