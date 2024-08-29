@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userSchema = new mongoose_1.Schema({
@@ -19,8 +20,10 @@ const userSchema = new mongoose_1.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
-    role: { type: String, required: true, enum: ['admin', 'user'] },
+    role: { type: String, enum: ['admin', 'user'], default: 'user' },
     address: { type: String, required: true },
+    img: { type: String, required: true },
+    isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 userSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {

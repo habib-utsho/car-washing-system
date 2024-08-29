@@ -17,6 +17,7 @@ const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_service_1.userServices.createUser(req.body);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
@@ -26,25 +27,91 @@ const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 const signinUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_service_1.userServices.signinUser(req.body);
-    const { accessToken, data } = user || {};
-    res.status(http_status_codes_1.StatusCodes.OK).send({ success: true, statusCode: http_status_codes_1.StatusCodes.OK, message: 'User logged in successfully', token: accessToken, data });
-    // sendResponse(res, StatusCodes.OK, {
-    //   success: true,
-    //   message: 'User logged in successfully',
-    //   data,
-    // })
-}));
-const getAllUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield user_service_1.userServices.getAllUser();
+    const { accessToken, refreshToken } = yield user_service_1.userServices.signinUser(req.body);
+    res.cookie('refreshToken', refreshToken, {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+    });
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'Users are retrieved successfully',
-        data: users,
+        message: 'User is logged in successfully',
+        data: { accessToken },
+    });
+}));
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies || {};
+    if (!refreshToken) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Refresh token is required');
+    }
+    const result = yield user_service_1.userServices.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Access token is retrieved successfully',
+        data: result,
+    });
+}));
+const getAllUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data, total } = yield user_service_1.userServices.getAllUser(req.query);
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Users are retrieved successfully!',
+        data,
+        meta: { query: req.query, total },
+    });
+}));
+const deleteUserById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_service_1.userServices.deleteUserById(req.params.id);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found!');
+    }
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'User is deleted successfully!',
+        data: user,
+    });
+}));
+const toggleUserRoleById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_service_1.userServices.toggleUserRoleById(req.params.id);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found!');
+    }
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: `This user is now ${user.role}!`,
+        data: user,
+    });
+}));
+const updateProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const user = yield user_service_1.userServices.updateProfile((_a = req.params) === null || _a === void 0 ? void 0 : _a.id, req.body);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found');
+    }
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'User is updated successfully!',
+        data: user,
+    });
+}));
+const changePassword = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const user = yield user_service_1.userServices.changePassword((_b = req.params) === null || _b === void 0 ? void 0 : _b.id, req.body);
+    if (!user) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User not found');
+    }
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Password is updated successfully!',
+        data: user,
     });
 }));
 exports.userControllers = {
     createUser,
     signinUser,
     getAllUser,
+    refreshToken,
+    deleteUserById,
+    toggleUserRoleById,
+    updateProfile,
+    changePassword,
 };

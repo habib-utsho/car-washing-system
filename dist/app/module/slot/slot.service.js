@@ -29,8 +29,22 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const service_model_1 = __importDefault(require("../service/service.model"));
 const slot_model_1 = __importDefault(require("./slot.model"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const slot_constant_1 = require("./slot.constant");
 const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const _a = payload || {}, { service, startTime, endTime } = _a, restSlotProps = __rest(_a, ["service", "startTime", "endTime"]);
+    const _a = payload || {}, { service, startTime, endTime, date } = _a, restSlotProps = __rest(_a, ["service", "startTime", "endTime", "date"]);
+    // Validate if the date is not in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set the time to the beginning of today for accurate comparison
+    const slotDate = new Date(date); // Parse the ISO 8601 date
+    if (slotDate < today) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'The date cannot be in the past!');
+    }
+    // Validation: Check if endTime is greater than startTime
+    const startTimeToMin = Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[0]) * 60 + Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[1]);
+    const endTimeToMin = Number(endTime === null || endTime === void 0 ? void 0 : endTime.split(':')[0]) * 60 + Number(endTime === null || endTime === void 0 ? void 0 : endTime.split(':')[1]);
+    if (endTimeToMin <= startTimeToMin) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'End time must be later than start time!');
+    }
     const isExistService = yield service_model_1.default.findById(service);
     if (!isExistService) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Service is not found!');
@@ -40,8 +54,6 @@ const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const slots = [];
     const serviceDuration = isExistService === null || isExistService === void 0 ? void 0 : isExistService.duration;
-    const startTimeToMin = Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[0]) * 60 + Number(startTime === null || startTime === void 0 ? void 0 : startTime.split(':')[1]);
-    const endTimeToMin = Number(endTime === null || endTime === void 0 ? void 0 : endTime.split(':')[0]) * 60 + Number(endTime === null || endTime === void 0 ? void 0 : endTime.split(':')[1]);
     for (let time = startTimeToMin; time < endTimeToMin; time += serviceDuration) {
         const slotStartTime = `${Math.floor(time / 60)
             .toString()
@@ -49,30 +61,60 @@ const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         const slotEndTime = `${Math.floor((time + serviceDuration) / 60)
             .toString()
             .padStart(2, '0')}:${((time + serviceDuration) % 60).toString().padStart(2, '0')}`;
-        const slot = new slot_model_1.default(Object.assign({ startTime: slotStartTime, endTime: slotEndTime, service }, restSlotProps));
+        const slot = new slot_model_1.default(Object.assign({ startTime: slotStartTime, endTime: slotEndTime, service,
+            date }, restSlotProps));
         slots.push(slot);
         yield slot.save();
     }
     return slots;
 });
-const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log({...query, isBooked:'available'}, 'from query');
-    const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign(Object.assign({}, query), { isBooked: 'available' }))
-        .searchQuery(['isBooked'])
+const getAllSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign({}, query))
+        .searchQuery(slot_constant_1.slotSearchableFields)
         .filterQuery()
-        .paginateQuery()
         .sortQuery()
+        .paginateQuery()
         .fieldFilteringQuery()
         .populateQuery([
         {
             path: 'service',
         },
     ]);
-    // const result = await Slot.find({ isBooked: 'available' }).populate('service')
-    const result = yield slotsQuery.queryModel;
-    return result;
+    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel);
+    const total = yield slot_model_1.default.countDocuments(slotsQuery.queryModel.getFilter());
+    return { data: result, total };
+});
+const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign(Object.assign({}, query), { isBooked: 'available' }))
+        .searchQuery([])
+        .filterQuery()
+        .sortQuery()
+        .paginateQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'service',
+        },
+    ]);
+    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel);
+    const total = yield slot_model_1.default.countDocuments(slotsQuery.queryModel.getFilter());
+    return { data: result, total };
+});
+const toggleSlotStatus = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const slot = yield slot_model_1.default.findById(id);
+    if (!slot) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Slot is not found!');
+    }
+    if (slot.isBooked === 'booked') {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Slot is already booked!');
+    }
+    slot.isBooked = slot.isBooked === 'available' ? 'canceled' : 'available';
+    yield slot.save();
+    return slot;
 });
 exports.slotServices = {
     createSlot,
     getAvailableSlots,
+    getAllSlots,
+    toggleSlotStatus,
 };

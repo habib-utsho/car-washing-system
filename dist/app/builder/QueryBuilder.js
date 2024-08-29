@@ -1,4 +1,15 @@
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 class QueryBuilder {
     constructor(queryModel, query) {
@@ -20,17 +31,18 @@ class QueryBuilder {
     }
     //   Filter method
     filterQuery() {
-        const queryObj = Object.assign({}, this.query);
+        const _a = this.query, { priceRange } = _a, restQuery = __rest(_a, ["priceRange"]);
+        const queryObj = Object.assign({}, restQuery);
         const excludedFields = ['searchTerm', 'page', 'sort', 'limit', 'fields'];
         excludedFields.forEach((el) => delete queryObj[el]);
-        const serviceId = queryObj === null || queryObj === void 0 ? void 0 : queryObj.serviceId;
-        if (serviceId) {
-            // console.log(queryObj);
-            delete queryObj.serviceId;
-            this.queryModel = this.queryModel.find(Object.assign({ service: serviceId }, queryObj));
-        }
-        else {
-            this.queryModel = this.queryModel.find(queryObj);
+        this.queryModel = this.queryModel.find(queryObj);
+        // Apply price range filtering if provided
+        if (priceRange) {
+            const [minPrice, maxPrice] = priceRange.split(',').map(Number);
+            this.queryModel = this.queryModel
+                .where('price')
+                .gte(minPrice)
+                .lte(maxPrice);
         }
         return this;
     }

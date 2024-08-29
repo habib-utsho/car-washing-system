@@ -76,6 +76,9 @@ const createSlot = async (payload: TSlot) => {
   return slots
 }
 const getAllSlots = async (query: Record<string, unknown>) => {
+  const isUpcoming = query.upcoming
+  delete query.upcoming
+
   const slotsQuery = new QueryBuilder(Slot.find(), {
     ...query,
   })
@@ -90,12 +93,21 @@ const getAllSlots = async (query: Record<string, unknown>) => {
       },
     ])
 
-  const result = await slotsQuery?.queryModel
+  if (isUpcoming) {
+    const currentTimestamp = new Date().getTime() // Get current time as a timestamp
+    slotsQuery.queryModel = slotsQuery.queryModel
+      .where('date')
+      .gte(currentTimestamp)
+  }
+
+  const result = await slotsQuery?.queryModel.exec()
   const total = await Slot.countDocuments(slotsQuery.queryModel.getFilter())
   return { data: result, total }
 }
 
 const getAvailableSlots = async (query: Record<string, unknown>) => {
+  const isUpcoming = query.upcoming
+  delete query.upcoming
   const slotsQuery = new QueryBuilder(Slot.find(), {
     ...query,
     isBooked: 'available',
@@ -111,7 +123,14 @@ const getAvailableSlots = async (query: Record<string, unknown>) => {
       },
     ])
 
-  const result = await slotsQuery?.queryModel
+  if (isUpcoming) {
+    const currentTimestamp = new Date().getTime() // Get current time as a timestamp
+    slotsQuery.queryModel = slotsQuery.queryModel
+      .where('date')
+      .gte(currentTimestamp)
+  }
+
+  const result = await slotsQuery?.queryModel.exec()
   const total = await Slot.countDocuments(slotsQuery.queryModel.getFilter())
   return { data: result, total }
 }

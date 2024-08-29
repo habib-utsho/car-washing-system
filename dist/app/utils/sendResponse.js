@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const http_status_codes_1 = require("http-status-codes");
+const getMeta_1 = __importDefault(require("./getMeta"));
 const sendResponse = (res, statusCode, format) => {
-    var _a, _b, _c;
+    var _a, _b;
     res.status(statusCode).send({
-        success: ((_a = format === null || format === void 0 ? void 0 : format.data) === null || _a === void 0 ? void 0 : _a.length) === 0 ? false : format === null || format === void 0 ? void 0 : format.success,
-        statusCode: ((_b = format === null || format === void 0 ? void 0 : format.data) === null || _b === void 0 ? void 0 : _b.length) === 0 ? http_status_codes_1.StatusCodes.NOT_FOUND : statusCode,
-        message: ((_c = format === null || format === void 0 ? void 0 : format.data) === null || _c === void 0 ? void 0 : _c.length) === 0 ? 'No Data Found' : format === null || format === void 0 ? void 0 : format.message,
+        success: format === null || format === void 0 ? void 0 : format.success,
+        message: format === null || format === void 0 ? void 0 : format.message,
         data: (format === null || format === void 0 ? void 0 : format.data) || null,
+        meta: (0, getMeta_1.default)((_a = format.meta) === null || _a === void 0 ? void 0 : _a.query, (_b = format.meta) === null || _b === void 0 ? void 0 : _b.total),
     });
 };
 exports.default = sendResponse;

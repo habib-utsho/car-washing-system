@@ -26,11 +26,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingServices = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
-const service_model_1 = __importDefault(require("../service/service.model"));
 const slot_model_1 = __importDefault(require("../slot/slot.model"));
 const booking_model_1 = __importDefault(require("./booking.model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_model_1 = __importDefault(require("../user/user.model"));
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const booking_constant_1 = require("./booking.constant");
+const service_model_1 = __importDefault(require("../service/service.model"));
 const createBooking = (email, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const _a = payload || {}, { serviceId, slotId } = _a, restBookingProps = __rest(_a, ["serviceId", "slotId"]);
     const isExistService = yield service_model_1.default.findById(serviceId);
@@ -57,7 +59,7 @@ const createBooking = (email, payload) => __awaiter(void 0, void 0, void 0, func
         isExistSlot.isBooked = 'booked';
         yield isExistSlot.save({ session });
         const booking = yield booking_model_1.default.create([
-            Object.assign({ service: serviceId, slot: slotId, customer: isExistUser === null || isExistUser === void 0 ? void 0 : isExistUser._id }, restBookingProps),
+            Object.assign({ service: serviceId, slot: slotId, date: isExistSlot.date, customer: isExistUser === null || isExistUser === void 0 ? void 0 : isExistUser._id }, restBookingProps),
         ], { session });
         if (!(booking === null || booking === void 0 ? void 0 : booking.length)) {
             throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Failed to booking!');
@@ -68,6 +70,7 @@ const createBooking = (email, payload) => __awaiter(void 0, void 0, void 0, func
             .populate('service')
             .populate('slot');
         return result;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (e) {
         yield session.abortTransaction();
@@ -77,24 +80,63 @@ const createBooking = (email, payload) => __awaiter(void 0, void 0, void 0, func
         yield session.endSession();
     }
 });
-const getAllBookings = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield booking_model_1.default.find({})
-        .populate('service')
-        .populate('customer')
-        .populate('slot');
-    return result;
+const getAllBookings = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const bookingQuery = new QueryBuilder_1.default(booking_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
+        .searchQuery(booking_constant_1.bookingSearchableFields)
+        .filterQuery()
+        .sortQuery()
+        .paginateQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'service',
+        },
+        {
+            path: 'customer',
+        },
+        {
+            path: 'slot',
+        },
+    ]);
+    const result = yield (bookingQuery === null || bookingQuery === void 0 ? void 0 : bookingQuery.queryModel);
+    const total = yield booking_model_1.default.countDocuments(bookingQuery.queryModel.getFilter());
+    return { data: result, total };
 });
-const getMyBookings = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    // TODO: Need to find my bookings using token
-    const user = yield user_model_1.default.findOne({ email });
+const getMyBookings = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.default.findOne({ email: query.email });
     if (!user) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'User is not found!');
     }
-    const result = yield booking_model_1.default.find({ customer: user })
-        .populate('service')
-        .populate('customer')
-        .populate('slot');
-    return result;
+    // Remove `email` from query as it's already used to find the user
+    delete query.email;
+    const isUpcoming = query.upcoming;
+    delete query.upcoming;
+    const bookingQuery = new QueryBuilder_1.default(booking_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
+        .searchQuery(booking_constant_1.bookingSearchableFields)
+        .filterQuery()
+        .sortQuery()
+        .paginateQuery()
+        .fieldFilteringQuery()
+        .populateQuery([
+        {
+            path: 'service',
+        },
+        {
+            path: 'customer',
+        },
+        {
+            path: 'slot',
+        },
+    ]);
+    if (isUpcoming) {
+        const currentTimestamp = new Date().getTime(); // Get current time as a timestamp
+        bookingQuery.queryModel = bookingQuery.queryModel
+            .where('date')
+            .gte(currentTimestamp);
+    }
+    const result = yield (bookingQuery === null || bookingQuery === void 0 ? void 0 : bookingQuery.queryModel.exec());
+    const total = yield booking_model_1.default.countDocuments(bookingQuery.queryModel.getFilter());
+    return { data: result, total };
 });
 exports.BookingServices = {
     createBooking,

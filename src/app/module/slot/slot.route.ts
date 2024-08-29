@@ -5,7 +5,7 @@ import { USER_ROLE } from '../user/user.constant'
 
 const router = Router()
 
-router.get('/', auth(USER_ROLE.admin), slotsControllers.getAllSlots)
+router.get('/', slotsControllers.getAllSlots)
 router.get('/availability', slotsControllers.getAvailableSlots)
 router.patch(
   '/toggle-status/:id',

@@ -21,10 +21,11 @@ const bookingSchema = new mongoose_1.Schema({
             'tractor',
         ],
     },
+    date: { type: Date },
     vehicleBrand: { type: String, required: true },
     vehicleModel: { type: String, required: true },
     manufacturingYear: { type: Number, required: true },
-    registrationPlate: { type: String, required: true, unique: true }
+    registrationPlate: { type: String, required: true },
 }, { timestamps: true });
 const Booking = (0, mongoose_1.model)('Booking', bookingSchema);
 exports.default = Booking;

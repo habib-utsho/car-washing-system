@@ -27,20 +27,22 @@ const createBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     });
 }));
 const getAllBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const bookings = yield booking_service_1.BookingServices.getAllBookings();
+    const { data, total } = yield booking_service_1.BookingServices.getAllBookings(req.query);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'All bookings retrieved successfully',
-        data: bookings,
+        message: 'All bookings are retrieved successfully!',
+        data,
+        meta: { query: req.query, total },
     });
 }));
 const getMyBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
-    const bookings = yield booking_service_1.BookingServices.getMyBookings((_b = req.user) === null || _b === void 0 ? void 0 : _b.email);
+    const { data, total } = yield booking_service_1.BookingServices.getMyBookings(Object.assign({ email: (_b = req.user) === null || _b === void 0 ? void 0 : _b.email }, req.query));
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'User bookings retrieved successfully',
-        data: bookings,
+        message: 'User bookings are retrieved successfully!',
+        data,
+        meta: { query: req.query, total },
     });
 }));
 exports.bookingControllers = {

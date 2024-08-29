@@ -7,8 +7,20 @@ import {
 } from './app/middleware/errHandler'
 import router from './app/routes/routes'
 import cookieParser from 'cookie-parser'
+import cron from 'node-cron'
+import axios from 'axios'
 
 const app = express()
+
+//   15 minute
+//   */15 * * * *
+// Self-ping task
+cron.schedule('*/60 * * * *', () => {
+  axios
+    .get(`https://car-washing-system.onrender.com`)
+    .then((response) => console.log('Self-ping successful:', response.status))
+    .catch((error) => console.error('Self-ping failed:', error.message))
+})
 
 // parser
 app.use(

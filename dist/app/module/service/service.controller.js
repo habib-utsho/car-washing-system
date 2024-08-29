@@ -27,11 +27,12 @@ const createService = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
     });
 }));
 const getAllService = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const services = yield service_service_1.serviceServices.getAllService();
+    const { data, total } = yield service_service_1.serviceServices.getAllService(req.query);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Services retrieved successfully!',
-        data: services,
+        data,
+        meta: { query: req.query, total },
     });
 }));
 const getServiceById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
