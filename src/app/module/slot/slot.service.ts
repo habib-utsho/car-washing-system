@@ -151,10 +151,15 @@ const toggleSlotStatus = async (id: string) => {
   return slot
 }
 
+const getSlotById = async (id: string) => {
+  const result = await Slot.findById(id).populate('service')
+  return result
+}
+
 export const slotServices = {
   createSlot,
   getAvailableSlots,
   getAllSlots,
-
+  getSlotById,
   toggleSlotStatus,
 }

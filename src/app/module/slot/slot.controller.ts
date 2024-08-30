@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { slotServices } from './slot.service'
+import AppError from '../../errors/AppError'
 
 const createSlot = catchAsync(async (req, res) => {
   const service = await slotServices.createSlot(req.body)
@@ -33,6 +34,18 @@ const getAllSlots = catchAsync(async (req, res) => {
   })
 })
 
+const getSlotById = catchAsync(async (req, res) => {
+  const slot = await slotServices.getSlotById(req.params?.id as string)
+  if (!slot) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Slot not found')
+  }
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'Slot is retrieved successfully!',
+    data: slot,
+  })
+})
+
 const toggleSlotStatus = catchAsync(async (req, res) => {
   const slot = await slotServices.toggleSlotStatus(req.params.id)
   sendResponse(res, StatusCodes.OK, {
@@ -47,4 +60,5 @@ export const slotsControllers = {
   getAvailableSlots,
   getAllSlots,
   toggleSlotStatus,
+  getSlotById,
 }

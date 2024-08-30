@@ -44,4 +44,4 @@ Running the Server by- **yarn dev**
 
 Local Base URL: **[Link](http://localhost:5500/api/v1)**
 
-Production Base URL: **[Link](https://car-washing-system.onrender.com)**
+Production Base URL: **[Link](https://car-washing-system.onrender.com/api/v1)**

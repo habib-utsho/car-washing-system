@@ -40,6 +40,9 @@ app.use(express.json())
 app.use('/api/v1', router)
 
 // Home route to test server
+app.get('/api/v1', (req, res) => {
+  res.status(200).send({ success: true, message: 'This is base url!' })
+})
 app.get('/', (req, res) => {
   res.status(200).send({ success: true, message: 'This is homepage' })
 })

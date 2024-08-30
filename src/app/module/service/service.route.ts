@@ -10,7 +10,8 @@ import { USER_ROLE } from '../user/user.constant'
 const router = Router()
 
 router.post(
-  '/', auth(USER_ROLE.admin),
+  '/',
+  auth(USER_ROLE.admin),
   zodValidateHandler(serviceZodSchema.createServiceZodSchema),
   serviceControllers.createService,
 ) //Only accessible by admin
@@ -22,8 +23,12 @@ router.post(
 ) //Only accessible by admin
 router.get('/', serviceControllers.getAllService)
 router.get('/:id', serviceControllers.getServiceById)
-router.delete('/:id', auth(USER_ROLE.admin), serviceControllers.deleteServiceById) //Only accessible by admin
-router.put(
+router.delete(
+  '/:id',
+  auth(USER_ROLE.admin),
+  serviceControllers.deleteServiceById,
+) //Only accessible by admin
+router.patch(
   '/:id',
   auth(USER_ROLE.admin),
   zodValidateHandler(serviceZodSchema.updateServiceZodSchema),
