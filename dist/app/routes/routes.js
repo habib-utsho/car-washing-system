@@ -6,6 +6,7 @@ const slot_route_1 = require("../module/slot/slot.route");
 const booking_route_1 = require("../module/booking/booking.route");
 const user_route_1 = require("../module/user/user.route");
 const stats_route_1 = require("../module/stats/stats.route");
+const payment_route_1 = require("../module/payment/payment.route");
 const router = (0, express_1.Router)();
 const routes = [
     {
@@ -23,6 +24,10 @@ const routes = [
     {
         path: '/auth',
         route: user_route_1.userRouter,
+    },
+    {
+        path: '/payment',
+        route: payment_route_1.paymentRouter,
     },
     {
         path: '/stats',

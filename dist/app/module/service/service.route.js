@@ -19,4 +19,4 @@ router.post('/slots', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), (0, 
 router.get('/', service_controller_1.serviceControllers.getAllService);
 router.get('/:id', service_controller_1.serviceControllers.getServiceById);
 router.delete('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), service_controller_1.serviceControllers.deleteServiceById); //Only accessible by admin
-router.put('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), (0, zodValidateHandler_1.default)(service_validate_1.serviceZodSchema.updateServiceZodSchema), service_controller_1.serviceControllers.updateServiceById); //Only accessible by admin
+router.patch('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), (0, zodValidateHandler_1.default)(service_validate_1.serviceZodSchema.updateServiceZodSchema), service_controller_1.serviceControllers.updateServiceById); //Only accessible by admin

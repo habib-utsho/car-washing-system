@@ -17,6 +17,7 @@ const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const slot_service_1 = require("./slot.service");
+const AppError_1 = __importDefault(require("../../errors/AppError"));
 const createSlot = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const service = yield slot_service_1.slotServices.createSlot(req.body);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
@@ -43,6 +44,18 @@ const getAllSlots = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         meta: { query: req.query, total },
     });
 }));
+const getSlotById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const slot = yield slot_service_1.slotServices.getSlotById((_a = req.params) === null || _a === void 0 ? void 0 : _a.id);
+    if (!slot) {
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Slot not found');
+    }
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Slot is retrieved successfully!',
+        data: slot,
+    });
+}));
 const toggleSlotStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const slot = yield slot_service_1.slotServices.toggleSlotStatus(req.params.id);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
@@ -56,4 +69,5 @@ exports.slotsControllers = {
     getAvailableSlots,
     getAllSlots,
     toggleSlotStatus,
+    getSlotById,
 };

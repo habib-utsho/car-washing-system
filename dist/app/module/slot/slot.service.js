@@ -69,6 +69,8 @@ const createSlot = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return slots;
 });
 const getAllSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUpcoming = query.upcoming;
+    delete query.upcoming;
     const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign({}, query))
         .searchQuery(slot_constant_1.slotSearchableFields)
         .filterQuery()
@@ -80,11 +82,19 @@ const getAllSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
             path: 'service',
         },
     ]);
-    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel);
+    if (isUpcoming) {
+        const currentTimestamp = new Date().getTime(); // Get current time as a timestamp
+        slotsQuery.queryModel = slotsQuery.queryModel
+            .where('date')
+            .gte(currentTimestamp);
+    }
+    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel.exec());
     const total = yield slot_model_1.default.countDocuments(slotsQuery.queryModel.getFilter());
     return { data: result, total };
 });
 const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    const isUpcoming = query.upcoming;
+    delete query.upcoming;
     const slotsQuery = new QueryBuilder_1.default(slot_model_1.default.find(), Object.assign(Object.assign({}, query), { isBooked: 'available' }))
         .searchQuery([])
         .filterQuery()
@@ -96,7 +106,13 @@ const getAvailableSlots = (query) => __awaiter(void 0, void 0, void 0, function*
             path: 'service',
         },
     ]);
-    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel);
+    if (isUpcoming) {
+        const currentTimestamp = new Date().getTime(); // Get current time as a timestamp
+        slotsQuery.queryModel = slotsQuery.queryModel
+            .where('date')
+            .gte(currentTimestamp);
+    }
+    const result = yield (slotsQuery === null || slotsQuery === void 0 ? void 0 : slotsQuery.queryModel.exec());
     const total = yield slot_model_1.default.countDocuments(slotsQuery.queryModel.getFilter());
     return { data: result, total };
 });
@@ -112,9 +128,14 @@ const toggleSlotStatus = (id) => __awaiter(void 0, void 0, void 0, function* () 
     yield slot.save();
     return slot;
 });
+const getSlotById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield slot_model_1.default.findById(id).populate('service');
+    return result;
+});
 exports.slotServices = {
     createSlot,
     getAvailableSlots,
     getAllSlots,
+    getSlotById,
     toggleSlotStatus,
 };

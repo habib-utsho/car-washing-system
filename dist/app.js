@@ -9,7 +9,18 @@ require("dotenv/config");
 const errHandler_1 = require("./app/middleware/errHandler");
 const routes_1 = __importDefault(require("./app/routes/routes"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const node_cron_1 = __importDefault(require("node-cron"));
+const axios_1 = __importDefault(require("axios"));
 const app = (0, express_1.default)();
+//   15 minute
+//   */15 * * * *
+// Self-ping task
+node_cron_1.default.schedule('*/60 * * * *', () => {
+    axios_1.default
+        .get(`https://car-washing-system.onrender.com`)
+        .then((response) => console.log('Self-ping successful:', response.status))
+        .catch((error) => console.error('Self-ping failed:', error.message));
+});
 // parser
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
@@ -25,6 +36,9 @@ app.use(express_1.default.json());
 // Routes
 app.use('/api/v1', routes_1.default);
 // Home route to test server
+app.get('/api/v1', (req, res) => {
+    res.status(200).send({ success: true, message: 'This is base url!' });
+});
 app.get('/', (req, res) => {
     res.status(200).send({ success: true, message: 'This is homepage' });
 });
