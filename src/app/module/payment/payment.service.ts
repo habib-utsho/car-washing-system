@@ -8,9 +8,9 @@ const initPayment = async (payload: TPayment) => {
   try {
     const paymentInfo = {
       store_id: 'aamarpaytest',
-      success_url: 'http://www.merchantdomain.com/successpage.html',
-      fail_url: 'http://www.merchantdomain.com/failedpage.html',
-      cancel_url: 'http://www.merchantdomain.com/cancelpage.html',
+      success_url: 'https://car-cleanify.netlify.app/success',
+      fail_url: 'https://car-cleanify.netlify.app/failed',
+      cancel_url: 'https://car-cleanify.netlify.app/cancelled',
       currency: 'BDT',
       signature_key: 'dbb74894e82415a2f7ff0ec3a97e4183',
       desc: 'Merchant Registration Payment',
