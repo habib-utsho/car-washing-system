@@ -11,3 +11,4 @@ const stats_controller_1 = require("./stats.controller");
 const router = (0, express_1.Router)();
 exports.statsRouter = router;
 router.get('/admin', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), stats_controller_1.statsControllers.getAdminStats);
+router.get('/user', (0, auth_1.default)(user_constant_1.USER_ROLE.user), stats_controller_1.statsControllers.getUserStats);

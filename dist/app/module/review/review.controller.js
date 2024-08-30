@@ -12,29 +12,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.statsControllers = void 0;
+exports.reviewControllers = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
-const stats_service_1 = require("./stats.service");
-const getAdminStats = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield stats_service_1.statsService.getAdminStats();
+const review_service_1 = require("./review.service");
+const createReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const review = yield review_service_1.reviewServices.createReview(req.body);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'Admin stats are retrieved successfully!',
+        message: 'Review created successfully',
+        data: review,
+    });
+}));
+const getAllReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { data, total } = yield review_service_1.reviewServices.getAllReview(req.query);
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Reviews are retrieved successfully!',
+        data,
+        meta: { query: req.query, total },
+    });
+}));
+const getAverageRating = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield review_service_1.reviewServices.getAverageRating(req.query);
+    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
+        success: true,
+        message: 'Average ratings are retrieved successfully!',
         data,
     });
 }));
-const getUserStats = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const data = yield stats_service_1.statsService.getUserStats({ customer: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
-    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
-        success: true,
-        message: 'User stats are retrieved successfully!',
-        data,
-    });
-}));
-exports.statsControllers = {
-    getAdminStats,
-    getUserStats,
+exports.reviewControllers = {
+    createReview,
+    getAllReview,
+    getAverageRating,
 };

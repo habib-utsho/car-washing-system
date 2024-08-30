@@ -12,29 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.statsControllers = void 0;
+exports.uploadControllers = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
-const stats_service_1 = require("./stats.service");
-const getAdminStats = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield stats_service_1.statsService.getAdminStats();
+const upload_service_1 = require("./upload.service");
+const initUpload = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield upload_service_1.uploadServices.initUpload(req.body);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
-        message: 'Admin stats are retrieved successfully!',
-        data,
+        message: 'File upload successfully!',
+        data: data,
     });
 }));
-const getUserStats = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const data = yield stats_service_1.statsService.getUserStats({ customer: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
-    (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
-        success: true,
-        message: 'User stats are retrieved successfully!',
-        data,
-    });
-}));
-exports.statsControllers = {
-    getAdminStats,
-    getUserStats,
+exports.uploadControllers = {
+    initUpload,
 };

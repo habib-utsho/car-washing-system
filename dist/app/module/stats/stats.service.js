@@ -8,9 +8,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.statsService = void 0;
-const getAdminStats = () => __awaiter(void 0, void 0, void 0, function* () { });
+const booking_model_1 = __importDefault(require("../booking/booking.model"));
+const service_model_1 = __importDefault(require("../service/service.model"));
+const slot_model_1 = __importDefault(require("../slot/slot.model"));
+const user_model_1 = __importDefault(require("../user/user.model"));
+const getAdminStats = () => __awaiter(void 0, void 0, void 0, function* () {
+    const totalUsers = yield user_model_1.default.countDocuments();
+    const totalServices = yield service_model_1.default.countDocuments();
+    const totalSlots = yield slot_model_1.default.countDocuments();
+    const availableSlots = yield slot_model_1.default.find({
+        isBooked: 'available',
+    }).countDocuments();
+    // Fetch the total number of bookings
+    const totalBookings = yield booking_model_1.default.countDocuments();
+    return {
+        totalUsers,
+        totalServices,
+        totalSlots,
+        availableSlots,
+        totalBookings,
+    };
+});
+const getUserStats = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const totalServices = yield service_model_1.default.countDocuments();
+    const availableSlots = yield slot_model_1.default.find({
+        isBooked: 'available',
+    }).countDocuments();
+    // Fetch the total number of bookings
+    const totalBookings = yield booking_model_1.default.find({
+        customer: payload === null || payload === void 0 ? void 0 : payload.customer,
+    }).countDocuments();
+    return {
+        totalServices,
+        availableSlots,
+        totalBookings,
+    };
+});
 exports.statsService = {
     getAdminStats,
+    getUserStats,
 };

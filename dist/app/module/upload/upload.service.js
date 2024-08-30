@@ -12,26 +12,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.paymentServices = void 0;
-/* eslint-disable @typescript-eslint/no-unused-vars */
+exports.uploadServices = void 0;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const http_status_codes_1 = require("http-status-codes");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const axios_1 = __importDefault(require("axios"));
-const initPayment = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const initUpload = (file) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const paymentInfo = Object.assign({ store_id: 'aamarpaytest', success_url: 'https://car-cleanify.netlify.app/success', fail_url: 'https://car-cleanify.netlify.app/failed', cancel_url: 'https://car-cleanify.netlify.app/cancelled', currency: 'BDT', signature_key: 'dbb74894e82415a2f7ff0ec3a97e4183', desc: 'Merchant Registration Payment', cus_city: 'Dhaka', cus_state: 'Dhaka', cus_postcode: '1206', cus_country: 'Bangladesh', type: 'json' }, payload);
-        const res = yield axios_1.default.post('https://sandbox.aamarpay.com/jsonpost.php', paymentInfo);
-        if (res.data && res.data.result) {
+        const apiUrl = `https://api.imgbb.com/1/upload?key=${process.env.VITE_IMGBB_API_KEY}`;
+        const res = yield axios_1.default.post(apiUrl, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            timeout: 60000 // Set a timeout (e.g., 60 seconds) if necessary
+        });
+        console.log(res.data, 'Response after upload');
+        if (res.data && res.data.success) {
             return res.data;
         }
         else {
-            throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Payment failed');
+            throw new AppError_1.default(http_status_codes_1.StatusCodes.BAD_REQUEST, 'Upload failed');
         }
     }
     catch (error) {
-        throw new AppError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, error.message || 'An error occurred during the payment process');
+        console.error('Upload Error:', ((_a = error.response) === null || _a === void 0 ? void 0 : _a.data) || error.message || 'Unknown error');
+        throw new AppError_1.default(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR, error.message || 'An error occurred during the upload process!');
     }
 });
-exports.paymentServices = {
-    initPayment,
+exports.uploadServices = {
+    initUpload,
 };
