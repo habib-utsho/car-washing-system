@@ -31,6 +31,9 @@ Create a .env file in the root directory and provide the following variables:
 - Express.js
 - MongoDB
 - Mongoose
+- ZOD
+- JWT
+
 
 ## Features
 
@@ -38,7 +41,10 @@ Create a .env file in the root directory and provide the following variables:
 - Authorization
 - Admin can create, update and delete services
 - Admin can create slot for services
-- User can booked a slot
+- User can book a slot
+- Services page with filtering , searching and sorting
+- Role base page access
+- User dashboard and Admin dashboard
 
 Running the Server by- **yarn dev**
 
