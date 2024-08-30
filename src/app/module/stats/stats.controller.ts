@@ -12,7 +12,17 @@ const getAdminStats = catchAsync(async (req, res) => {
     data,
   })
 })
+const getUserStats = catchAsync(async (req, res) => {
+  const data = await statsService.getUserStats({ customer: req?.user?._id })
+
+  sendResponse(res, StatusCodes.OK, {
+    success: true,
+    message: 'User stats are retrieved successfully!',
+    data,
+  })
+})
 
 export const statsControllers = {
   getAdminStats,
+  getUserStats,
 }

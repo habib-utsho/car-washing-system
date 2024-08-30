@@ -29,12 +29,12 @@ const getMyBookings = catchAsync(async (req: Request, res: Response) => {
     ...req.query,
   })
 
-
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'User bookings are retrieved successfully!',
     data,
-    meta: { query: req.query, total },  })
+    meta: { query: req.query, total },
+  })
 })
 
 export const bookingControllers = {
