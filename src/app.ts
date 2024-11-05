@@ -15,7 +15,7 @@ const app = express()
 //   15 minute
 //   */15 * * * *
 // Self-ping task
-cron.schedule('*/60 * * * *', () => {
+cron.schedule('*/20 * * * *', () => {
   axios
     .get(`https://car-washing-system.onrender.com`)
     .then((response) => console.log('Self-ping successful:', response.status))

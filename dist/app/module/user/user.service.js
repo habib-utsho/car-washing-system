@@ -21,10 +21,18 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const user_constant_1 = require("./user.constant");
-const createUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadImgToCloudinary_1 = require("../../utils/uploadImgToCloudinary");
+const createUser = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isExistUser = yield user_model_1.default.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email });
     if (isExistUser) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.FORBIDDEN, 'This email is already exist!');
+    }
+    // file upload
+    if (file === null || file === void 0 ? void 0 : file.path) {
+        const cloudinaryRes = yield (0, uploadImgToCloudinary_1.uploadImgToCloudinary)(`${payload.name}-${Date.now()}`, file.path);
+        if (cloudinaryRes === null || cloudinaryRes === void 0 ? void 0 : cloudinaryRes.secure_url) {
+            payload.img = cloudinaryRes.secure_url;
+        }
     }
     const result = yield user_model_1.default.create(payload);
     return result;
@@ -119,7 +127,14 @@ const deleteUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.default.findByIdAndUpdate(id, { isDeleted: true }, { new: true }).select('-__v');
     return user;
 });
-const updateProfile = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+const updateProfile = (id, file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // file upload
+    if (file === null || file === void 0 ? void 0 : file.path) {
+        const cloudinaryRes = yield (0, uploadImgToCloudinary_1.uploadImgToCloudinary)(`${payload.name}-${Date.now()}`, file.path);
+        if (cloudinaryRes === null || cloudinaryRes === void 0 ? void 0 : cloudinaryRes.secure_url) {
+            payload.img = cloudinaryRes.secure_url;
+        }
+    }
     const result = yield user_model_1.default.findByIdAndUpdate(id, payload, { new: true });
     return result;
 });

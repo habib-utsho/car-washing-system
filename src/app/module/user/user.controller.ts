@@ -5,7 +5,7 @@ import { userServices } from './user.service'
 import AppError from '../../errors/AppError'
 
 const createUser = catchAsync(async (req, res) => {
-  const user = await userServices.createUser(req.body)
+  const user = await userServices.createUser(req.file, req.body)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'User registered successfully',
@@ -77,7 +77,11 @@ const toggleUserRoleById = catchAsync(async (req, res) => {
 })
 
 const updateProfile = catchAsync(async (req, res) => {
-  const user = await userServices.updateProfile(req.params?.id, req.body)
+  const user = await userServices.updateProfile(
+    req.params?.id,
+    req.file,
+    req.body,
+  )
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'User not found')

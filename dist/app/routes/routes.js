@@ -9,6 +9,7 @@ const stats_route_1 = require("../module/stats/stats.route");
 const payment_route_1 = require("../module/payment/payment.route");
 const upload_route_1 = require("../module/upload/upload.route");
 const review_route_1 = require("../module/review/review.route");
+const notice_route_1 = require("../module/notice/notice.route");
 const router = (0, express_1.Router)();
 const routes = [
     {
@@ -42,6 +43,10 @@ const routes = [
     {
         path: '/review',
         route: review_route_1.reviewRouter,
+    },
+    {
+        path: '/notice',
+        route: notice_route_1.noticeRouter,
     },
 ];
 routes.forEach((route) => router.use(route.path, route.route));

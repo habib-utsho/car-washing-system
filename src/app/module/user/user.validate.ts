@@ -7,10 +7,8 @@ const createUserZodSchema = z.object({
   phone: z.string(),
   role: z.enum(['admin', 'user']).optional(),
   address: z.string(),
-  img: z.string(),
 })
 const editProfileZodSchema = z.object({
-  img: z.string().optional(),
   name: z.string().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),

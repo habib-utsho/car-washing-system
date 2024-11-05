@@ -7,11 +7,22 @@ import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { userSearchableFields } from './user.constant'
+import { uploadImgToCloudinary } from '../../utils/uploadImgToCloudinary'
 
-const createUser = async (payload: TUser) => {
+const createUser = async (file: any, payload: TUser) => {
   const isExistUser = await User.findOne({ email: payload?.email })
   if (isExistUser) {
     throw new AppError(StatusCodes.FORBIDDEN, 'This email is already exist!')
+  }
+  // file upload
+  if (file?.path) {
+    const cloudinaryRes = await uploadImgToCloudinary(
+      `${payload.name}-${Date.now()}`,
+      file.path,
+    )
+    if (cloudinaryRes?.secure_url) {
+      payload.img = cloudinaryRes.secure_url
+    }
   }
   const result = await User.create(payload)
   return result
@@ -149,7 +160,17 @@ const deleteUserById = async (id: string) => {
   return user
 }
 
-const updateProfile = async (id: string, payload: TUser) => {
+const updateProfile = async (id: string, file: any, payload: TUser) => {
+  // file upload
+  if (file?.path) {
+    const cloudinaryRes = await uploadImgToCloudinary(
+      `${payload.name}-${Date.now()}`,
+      file.path,
+    )
+    if (cloudinaryRes?.secure_url) {
+      payload.img = cloudinaryRes.secure_url
+    }
+  }
   const result = await User.findByIdAndUpdate(id, payload, { new: true })
   return result
 }

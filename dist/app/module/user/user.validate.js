@@ -9,10 +9,8 @@ const createUserZodSchema = zod_1.z.object({
     phone: zod_1.z.string(),
     role: zod_1.z.enum(['admin', 'user']).optional(),
     address: zod_1.z.string(),
-    img: zod_1.z.string(),
 });
 const editProfileZodSchema = zod_1.z.object({
-    img: zod_1.z.string().optional(),
     name: zod_1.z.string().optional(),
     phone: zod_1.z.string().optional(),
     address: zod_1.z.string().optional(),
