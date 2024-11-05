@@ -6,6 +6,7 @@ type TPayload = {
   subject: string
   html: string
 }
+
 export const sendEmail = async (payload: TPayload) => {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
