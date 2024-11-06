@@ -12,14 +12,21 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const axios_1 = __importDefault(require("axios"));
 const app = (0, express_1.default)();
-//   15 minute
-//   */15 * * * *
+const axiosInstance = axios_1.default.create({
+    timeout: 30000, // 30 seconds timeout
+});
+//   10 minute
+//   */10 * * * *
 // Self-ping task
-node_cron_1.default.schedule('*/20 * * * *', () => {
-    axios_1.default
+node_cron_1.default.schedule('*/10 * * * *', () => {
+    axiosInstance
         .get(`https://car-washing-system.onrender.com`)
-        .then((response) => console.log('Self-ping successful:', response.status))
-        .catch((error) => console.error('Self-ping failed:', error.message));
+        .then((response) => {
+        console.log('😀🎉 Self-ping successful after every 10m:', response.status);
+    })
+        .catch((error) => {
+        console.error('😡 Self-ping failed:', error.message);
+    });
 });
 // parser
 app.use((0, cors_1.default)({
