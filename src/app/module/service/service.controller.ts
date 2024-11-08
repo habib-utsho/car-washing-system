@@ -5,7 +5,7 @@ import { serviceServices } from './service.service'
 import sendResponse from '../../utils/sendResponse'
 
 const createService = catchAsync(async (req, res) => {
-  const service = await serviceServices.createService(req.body)
+  const service = await serviceServices.createService(req.file, req.body)
   sendResponse(res, StatusCodes.OK, {
     success: true,
     message: 'Service is created successfully!',
@@ -50,6 +50,7 @@ const deleteServiceById = catchAsync(async (req, res) => {
 const updateServiceById = catchAsync(async (req, res) => {
   const service = await serviceServices.updateServiceById(
     req.params?.id,
+    req.file, 
     req.body,
   )
 

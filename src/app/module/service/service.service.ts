@@ -1,9 +1,22 @@
 import QueryBuilder from '../../builder/QueryBuilder'
+import { uploadImgToCloudinary } from '../../utils/uploadImgToCloudinary'
 import { serviceSearchableFields } from './service.constant'
 import { TService } from './service.interface'
 import Service from './service.model'
 
-const createService = async (payload: TService) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createService = async (file: any, payload: TService) => {
+  // file upload
+  if (file?.path) {
+    const cloudinaryRes = await uploadImgToCloudinary(
+      `${payload.name}-${Date.now()}`,
+      file.path,
+    )
+    if (cloudinaryRes?.secure_url) {
+      payload.img = cloudinaryRes.secure_url
+    }
+  }
+
   const result = await Service.create(payload)
   return result
 }
@@ -36,7 +49,19 @@ const deleteServiceById = async (id: string) => {
   )
   return result
 }
-const updateServiceById = async (id: string, payload: TService) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateServiceById = async (id: string, file: any, payload: TService) => {
+  // file upload
+  if (file?.path) {
+    const cloudinaryRes = await uploadImgToCloudinary(
+      `${payload.name}-${Date.now()}`,
+      file.path,
+    )
+    if (cloudinaryRes?.secure_url) {
+      payload.img = cloudinaryRes.secure_url
+    }
+  }
+
   const result = await Service.findByIdAndUpdate(id, payload, { new: true })
   return result
 }
