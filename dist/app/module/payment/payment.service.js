@@ -19,7 +19,7 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const axios_1 = __importDefault(require("axios"));
 const initPayment = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const paymentInfo = Object.assign({ store_id: 'aamarpaytest', success_url: 'https://car-cleanify.netlify.app/success', fail_url: 'https://car-cleanify.netlify.app/failed', cancel_url: 'https://car-cleanify.netlify.app/cancelled', currency: 'BDT', signature_key: 'dbb74894e82415a2f7ff0ec3a97e4183', desc: 'Merchant Registration Payment', cus_city: 'Dhaka', cus_state: 'Dhaka', cus_postcode: '1206', cus_country: 'Bangladesh', type: 'json' }, payload);
+        const paymentInfo = Object.assign({ store_id: 'aamarpaytest', success_url: 'https://car-cleanify.vercel.app/success', fail_url: 'https://car-cleanify.vercel.app/failed', cancel_url: 'https://car-cleanify.vercel.app/cancelled', currency: 'BDT', signature_key: 'dbb74894e82415a2f7ff0ec3a97e4183', desc: 'Merchant Registration Payment', cus_city: 'Dhaka', cus_state: 'Dhaka', cus_postcode: '1206', cus_country: 'Bangladesh', type: 'json' }, payload);
         const res = yield axios_1.default.post('https://sandbox.aamarpay.com/jsonpost.php', paymentInfo);
         if (res.data && res.data.result) {
             return res.data;

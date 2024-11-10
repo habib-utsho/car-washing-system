@@ -8,9 +8,9 @@ const initPayment = async (payload: TPayment) => {
   try {
     const paymentInfo = {
       store_id: 'aamarpaytest',
-      success_url: 'https://car-cleanify.netlify.app/success',
-      fail_url: 'https://car-cleanify.netlify.app/failed',
-      cancel_url: 'https://car-cleanify.netlify.app/cancelled',
+      success_url: 'https://car-cleanify.vercel.app/success',
+      fail_url: 'https://car-cleanify.vercel.app/failed',
+      cancel_url: 'https://car-cleanify.vercel.app/cancelled',
       currency: 'BDT',
       signature_key: 'dbb74894e82415a2f7ff0ec3a97e4183',
       desc: 'Merchant Registration Payment',

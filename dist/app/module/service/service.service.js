@@ -14,9 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serviceServices = void 0;
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const uploadImgToCloudinary_1 = require("../../utils/uploadImgToCloudinary");
 const service_constant_1 = require("./service.constant");
 const service_model_1 = __importDefault(require("./service.model"));
-const createService = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createService = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // file upload
+    if (file === null || file === void 0 ? void 0 : file.path) {
+        const cloudinaryRes = yield (0, uploadImgToCloudinary_1.uploadImgToCloudinary)(`${payload.name}-${Date.now()}`, file.path);
+        if (cloudinaryRes === null || cloudinaryRes === void 0 ? void 0 : cloudinaryRes.secure_url) {
+            payload.img = cloudinaryRes.secure_url;
+        }
+    }
     const result = yield service_model_1.default.create(payload);
     return result;
 });
@@ -39,7 +48,15 @@ const deleteServiceById = (id) => __awaiter(void 0, void 0, void 0, function* ()
     const result = yield service_model_1.default.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     return result;
 });
-const updateServiceById = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateServiceById = (id, file, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    // file upload
+    if (file === null || file === void 0 ? void 0 : file.path) {
+        const cloudinaryRes = yield (0, uploadImgToCloudinary_1.uploadImgToCloudinary)(`${payload.name}-${Date.now()}`, file.path);
+        if (cloudinaryRes === null || cloudinaryRes === void 0 ? void 0 : cloudinaryRes.secure_url) {
+            payload.img = cloudinaryRes.secure_url;
+        }
+    }
     const result = yield service_model_1.default.findByIdAndUpdate(id, payload, { new: true });
     return result;
 });

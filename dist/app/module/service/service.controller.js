@@ -19,7 +19,7 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const service_service_1 = require("./service.service");
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const createService = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const service = yield service_service_1.serviceServices.createService(req.body);
+    const service = yield service_service_1.serviceServices.createService(req.file, req.body);
     (0, sendResponse_1.default)(res, http_status_codes_1.StatusCodes.OK, {
         success: true,
         message: 'Service is created successfully!',
@@ -62,7 +62,7 @@ const deleteServiceById = (0, catchAsync_1.default)((req, res) => __awaiter(void
 }));
 const updateServiceById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
-    const service = yield service_service_1.serviceServices.updateServiceById((_c = req.params) === null || _c === void 0 ? void 0 : _c.id, req.body);
+    const service = yield service_service_1.serviceServices.updateServiceById((_c = req.params) === null || _c === void 0 ? void 0 : _c.id, req.file, req.body);
     if (!service) {
         throw new AppError_1.default(http_status_codes_1.StatusCodes.NOT_FOUND, 'Service not found');
     }
