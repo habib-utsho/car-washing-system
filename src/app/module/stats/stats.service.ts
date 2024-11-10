@@ -7,9 +7,15 @@ const getAdminStats = async () => {
   const totalUsers = await User.countDocuments()
   const totalServices = await Service.countDocuments()
   const totalSlots = await Slot.countDocuments()
-  const availableSlots = await Slot.find({
+  // Fetch upcoming slots (slots with a date later than the current time)
+  const upcomingSlots = await Slot.countDocuments({
+    date: { $gte: new Date() },
+  })
+
+  // Fetch available slots (slots that are not booked)
+  const availableSlots = await Slot.countDocuments({
     isBooked: 'available',
-  }).countDocuments()
+  })
 
   // Fetch the total number of bookings
   const totalBookings = await Booking.countDocuments()
@@ -19,6 +25,7 @@ const getAdminStats = async () => {
     totalServices,
     totalSlots,
     availableSlots,
+    upcomingSlots,
     totalBookings,
   }
 }

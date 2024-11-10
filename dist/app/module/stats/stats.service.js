@@ -21,9 +21,14 @@ const getAdminStats = () => __awaiter(void 0, void 0, void 0, function* () {
     const totalUsers = yield user_model_1.default.countDocuments();
     const totalServices = yield service_model_1.default.countDocuments();
     const totalSlots = yield slot_model_1.default.countDocuments();
-    const availableSlots = yield slot_model_1.default.find({
+    // Fetch upcoming slots (slots with a date later than the current time)
+    const upcomingSlots = yield slot_model_1.default.countDocuments({
+        date: { $gte: new Date() },
+    });
+    // Fetch available slots (slots that are not booked)
+    const availableSlots = yield slot_model_1.default.countDocuments({
         isBooked: 'available',
-    }).countDocuments();
+    });
     // Fetch the total number of bookings
     const totalBookings = yield booking_model_1.default.countDocuments();
     return {
@@ -31,6 +36,7 @@ const getAdminStats = () => __awaiter(void 0, void 0, void 0, function* () {
         totalServices,
         totalSlots,
         availableSlots,
+        upcomingSlots,
         totalBookings,
     };
 });
