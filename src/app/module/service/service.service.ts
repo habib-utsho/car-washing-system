@@ -23,7 +23,7 @@ const createService = async (file: any, payload: TService) => {
 const getAllService = async (query: Record<string, unknown>) => {
   const serviceQuery = new QueryBuilder(Service.find(), {
     ...query,
-    sort: `${query.sort} isDeleted`,
+    sort: `${query.sort} -createdAt`,
   })
     .searchQuery(serviceSearchableFields)
     .filterQuery()
