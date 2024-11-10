@@ -123,6 +123,7 @@ const getMyBookings = async (query: Record<string, unknown>) => {
 
   const bookingQuery = new QueryBuilder(Booking.find(), {
     ...query,
+    customer: user._id,
     sort: `${query.sort} isDeleted`,
   })
     .searchQuery(bookingSearchableFields)

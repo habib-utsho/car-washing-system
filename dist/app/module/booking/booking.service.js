@@ -111,7 +111,7 @@ const getMyBookings = (query) => __awaiter(void 0, void 0, void 0, function* () 
     delete query.email;
     const isUpcoming = query.upcoming;
     delete query.upcoming;
-    const bookingQuery = new QueryBuilder_1.default(booking_model_1.default.find(), Object.assign(Object.assign({}, query), { sort: `${query.sort} isDeleted` }))
+    const bookingQuery = new QueryBuilder_1.default(booking_model_1.default.find(), Object.assign(Object.assign({}, query), { customer: user._id, sort: `${query.sort} isDeleted` }))
         .searchQuery(booking_constant_1.bookingSearchableFields)
         .filterQuery()
         .sortQuery()

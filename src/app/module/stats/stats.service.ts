@@ -31,6 +31,10 @@ const getAdminStats = async () => {
 }
 const getUserStats = async (payload: Record<string, unknown>) => {
   const totalServices = await Service.countDocuments()
+  // Fetch upcoming slots (slots with a date later than the current time)
+  const upcomingSlots = await Slot.countDocuments({
+    date: { $gte: new Date() },
+  })
   const availableSlots = await Slot.find({
     isBooked: 'available',
   }).countDocuments()
@@ -40,10 +44,18 @@ const getUserStats = async (payload: Record<string, unknown>) => {
     customer: payload?.customer,
   }).countDocuments()
 
+  // Fetch the total number of upcoming bookings
+  const upcomingBookings = await Booking.find({
+    customer: payload?.customer,
+    date: { $gte: new Date() },
+  }).countDocuments()
+
   return {
     totalServices,
     availableSlots,
+    upcomingSlots,
     totalBookings,
+    upcomingBookings,
   }
 }
 
