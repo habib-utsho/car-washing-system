@@ -7,29 +7,29 @@ import {
 } from './app/middleware/errHandler'
 import router from './app/routes/routes'
 import cookieParser from 'cookie-parser'
-import cron from 'node-cron'
-import axios from 'axios'
+// import cron from 'node-cron'
+// import axios from 'axios'
 
 const app = express()
 
-const axiosInstance = axios.create({
-  timeout: 30000, // 30 seconds timeout
-})
+// const axiosInstance = axios.create({
+//   timeout: 30000, // 30 seconds timeout
+// })
 
 //   10 minute
 //   */10 * * * *
 // Self-ping task
 
-cron.schedule('*/10 * * * *', () => {
-  axiosInstance
-    .get(`https://car-washing-system.onrender.com`)
-    .then((response) => {
-      console.log('😀🎉 Self-ping successful after every 10m:', response.status)
-    })
-    .catch((error) => {
-      console.error('😡 Self-ping failed:', error.message)
-    })
-})
+// cron.schedule('*/10 * * * *', () => {
+//   axiosInstance
+//     .get(`https://car-washing-system.onrender.com`)
+//     .then((response) => {
+//       console.log('😀🎉 Self-ping successful after every 10m:', response.status)
+//     })
+//     .catch((error) => {
+//       console.error('😡 Self-ping failed:', error.message)
+//     })
+// })
 
 // parser
 app.use(

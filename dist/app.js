@@ -9,25 +9,25 @@ require("dotenv/config");
 const errHandler_1 = require("./app/middleware/errHandler");
 const routes_1 = __importDefault(require("./app/routes/routes"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const node_cron_1 = __importDefault(require("node-cron"));
-const axios_1 = __importDefault(require("axios"));
+// import cron from 'node-cron'
+// import axios from 'axios'
 const app = (0, express_1.default)();
-const axiosInstance = axios_1.default.create({
-    timeout: 30000, // 30 seconds timeout
-});
+// const axiosInstance = axios.create({
+//   timeout: 30000, // 30 seconds timeout
+// })
 //   10 minute
 //   */10 * * * *
 // Self-ping task
-node_cron_1.default.schedule('*/10 * * * *', () => {
-    axiosInstance
-        .get(`https://car-washing-system.onrender.com`)
-        .then((response) => {
-        console.log('😀🎉 Self-ping successful after every 10m:', response.status);
-    })
-        .catch((error) => {
-        console.error('😡 Self-ping failed:', error.message);
-    });
-});
+// cron.schedule('*/10 * * * *', () => {
+//   axiosInstance
+//     .get(`https://car-washing-system.onrender.com`)
+//     .then((response) => {
+//       console.log('😀🎉 Self-ping successful after every 10m:', response.status)
+//     })
+//     .catch((error) => {
+//       console.error('😡 Self-ping failed:', error.message)
+//     })
+// })
 // parser
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
